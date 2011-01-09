@@ -80,7 +80,7 @@ instance Monoid m => Monoid (WrappedMonoid m) where
   WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
 
 
-newtype Option a = Option { runOption :: Maybe a } 
+newtype Option a = Option { getOption :: Maybe a } 
   deriving (Show, Read, Eq, Ord)
 
 instance Semigroup a => Semigroup (Option a) where
