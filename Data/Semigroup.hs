@@ -11,25 +11,60 @@
 ----------------------------------------------------------------------------
 module Data.Semigroup ( 
     Semigroup(..)
+  -- * Semigroups
   , Min(..)
   , Max(..)
-  , Option(..)
+  , First(..)
+  , Last(..)
   , WrappedMonoid(..)
+  -- * Monoids from Data.Monoid 
+  , Dual(..)
+  , Endo(..)
+  , All(..)
+  , Any(..)
+  , Sum(..)
+  , Product(..)
+  -- * A better monoid for Maybe
+  , Option(..)
+  , option
   ) where
 
 import Prelude hiding (foldr1)
-import Data.Monoid
-import Data.Foldable
+import Data.Monoid hiding (First(..), Last(..))
+import qualified Data.Monoid as Monoid
+
+#ifdef LANGUAGE_DeriveDataTypeable
+import Data.Data
+#endif
 
 infixl 4 <> 
 
 class Semigroup a where
   (<>) :: a -> a -> a
 
-  fold1 :: Foldable f => f a -> a
-  fold1 = foldr1 (<>) 
+instance Semigroup [a] where
+  (<>) = (++)
 
--- Semigroups from Data.Monoid
+instance Semigroup a => Semigroup (Maybe a) where
+  Nothing <> b       = b
+  a       <> Nothing = a
+  Just a  <> Just b  = Just (a <> b)
+
+instance Semigroup (Either a b) where
+  Left _ <> b = b
+  a      <> _ = a
+
+instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
+  (a,b) <> (a',b') = (a<>a',b<>b')
+  
+instance (Semigroup a, Semigroup b, Semigroup c) => Semigroup (a, b, c) where
+  (a,b,c) <> (a',b',c') = (a<>a',b<>b',c<>c')
+
+instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d) => Semigroup (a, b, c, d) where
+  (a,b,c,d) <> (a',b',c',d') = (a<>a',b<>b',c<>c',d<>d')
+
+instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d, Semigroup e) => Semigroup (a, b, c, d, e) where
+  (a,b,c,d,e) <> (a',b',c',d',e') = (a<>a',b<>b',c<>c',d<>d',e<>e')
 
 instance Semigroup a => Semigroup (Dual a) where
   Dual a <> Dual b = Dual (b <> a)
@@ -49,28 +84,74 @@ instance Num a => Semigroup (Sum a) where
 instance Num a => Semigroup (Product a) where
   Product a <> Product b = Product (a * b)
 
-instance Semigroup (First a) where
-  First Nothing <> b = b
+instance Semigroup (Monoid.First a) where
+  Monoid.First Nothing <> b = b
   a             <> _ = a
 
-instance Semigroup (Last a) where
-  a <> Last Nothing = a
+instance Semigroup (Monoid.Last a) where
+  a <> Monoid.Last Nothing = a
   _ <> b            = b
 
+newtype Min a = Min { getMin :: a } deriving 
+  ( Eq, Ord, Bounded, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+  )
 
-newtype Min a = Min { getMin :: a } 
 instance Ord a => Semigroup (Min a) where
   Min a <> Min b = Min (a `min` b)
 
-newtype Max a = Max { getMax :: a } 
+instance (Ord a, Bounded a) => Monoid (Min a) where
+  mempty = maxBound
+  mappend = (<>) 
+
+newtype Max a = Max { getMax :: a } deriving 
+  ( Eq, Ord, Bounded, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+  )
+
 instance Ord a => Semigroup (Max a) where
   Max a <> Max b = Max (a `min` b)
 
--- (==)/XNOR on Bool forms a Semigroup, but has no good name
+instance (Ord a, Bounded a) => Monoid (Max a) where
+  mempty = minBound
+  mappend = (<>) 
 
+-- | Use @'Option' ('First' a)@ -- to get the behavior of 'Data.Monoid.First'
+newtype First a = First { getFirst :: a } deriving 
+  ( Eq, Ord, Bounded, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data
+  , Typeable
+#endif
+  )
 
-newtype WrappedMonoid m = WrapMonoid { unwrapMonoid :: m } 
-  deriving (Show, Read, Eq, Ord)
+instance Semigroup (First a) where
+  a <> _ = a
+
+-- | Use @'Option' ('Last' a)@ -- to get the behavior of 'Data.Monoid.Last'
+newtype Last a = Last { getLast :: a } deriving 
+  ( Eq, Ord, Bounded, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+  )
+
+instance Semigroup (Last a) where
+  _ <> b = b
+
+-- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
+
+newtype WrappedMonoid m = WrapMonoid 
+  { unwrapMonoid :: m } deriving 
+  ( Eq, Ord, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+  )
 
 instance Monoid m => Semigroup (WrappedMonoid m) where
   WrapMonoid a <> WrapMonoid b = WrapMonoid (a `mappend` b)
@@ -79,18 +160,20 @@ instance Monoid m => Monoid (WrappedMonoid m) where
   mempty = WrapMonoid mempty
   WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
 
+newtype Option a = Option 
+  { getOption :: Maybe a } deriving 
+  ( Eq, Ord, Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+  )
 
-newtype Option a = Option { getOption :: Maybe a } 
-  deriving (Show, Read, Eq, Ord)
+option :: b -> (a -> b) -> Option a -> b
+option n j (Option m) = maybe n j m
 
 instance Semigroup a => Semigroup (Option a) where
-  Option Nothing <> b = b
-  a <> Option Nothing = a
-  Option (Just a) <> Option (Just b) = Option (Just (a <> b))
+  Option a <> Option b = Option (a <> b) 
 
 instance Semigroup a => Monoid (Option a) where
   mempty = Option Nothing
-
-  Option Nothing `mappend` b = b
-  a `mappend` Option Nothing = a
-  Option (Just a) `mappend` Option (Just b) = Option (Just (a <> b))
+  Option a `mappend` Option b = Option (a <> b)

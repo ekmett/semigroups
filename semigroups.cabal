@@ -1,8 +1,8 @@
 name:          semigroups
 category:      Control, Comonads
-version:       0.2.0
+version:       0.3.1
 license:       BSD3
-cabal-version: >= 1.2
+cabal-version: >= 1.6
 license-file:  LICENSE
 author:        Edward A. Kmett
 maintainer:    Edward A. Kmett <ekmett@gmail.com>
@@ -11,13 +11,21 @@ homepage:      http://comonad.com/reader/
 copyright:     Copyright (C) 2008-2011 Edward A. Kmett, Copyright (C) 2004-2008 Dave Menendez
 synopsis:      Haskell 98 semigroups
 description:   Haskell 98 semigroups
-build-type:    Simple
+build-type:    Simple  
+
+flag DeriveDataTypeable
+  description: DeriveDataTypeable available
+  default: True
+  manual: False
 
 library
-  build-depends: 
-    base >= 4 && < 4.4
+  build-depends: base >= 4 && < 4.4
+  ghc-options: -Wall
+  extensions: CPP
+  if flag(DeriveDataTypeable)
+    extensions: DeriveDataTypeable
+    cpp-options: -DLANGUAGE_DeriveDataTypeable
 
   exposed-modules:
     Data.Semigroup
 
-  ghc-options: -Wall 
