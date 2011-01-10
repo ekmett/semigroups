@@ -31,7 +31,12 @@ module Data.Semigroup (
 
 import Prelude hiding (foldr1)
 import Data.Monoid hiding (First(..), Last(..))
+import Control.Applicative
+import Control.Monad
+import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
+import Data.Foldable
+import Data.Traversable
 
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
@@ -168,6 +173,42 @@ newtype Option a = Option
 #endif
   )
 
+instance Functor Option where
+  fmap f (Option a) = Option (fmap f a)
+
+instance Applicative Option where
+  pure a = Option (Just a)
+  Option a <*> Option b = Option (a <*> b)
+
+instance Monad Option where
+  return = pure
+
+  Option (Just a) >>= k = k a
+  _               >>= _ = Option Nothing
+
+  Option Nothing  >>  _ = Option Nothing
+  _               >>  b = b
+
+instance Alternative Option where
+  empty = Option Nothing
+  Option Nothing <|> b = b
+  a <|> _ = a
+
+instance MonadPlus Option where
+  mzero = empty
+  mplus = (<|>)
+
+instance MonadFix Option where
+  mfix f = Option (mfix (getOption . f))
+
+instance Foldable Option where
+  foldMap f (Option (Just m)) = f m
+  foldMap _ (Option Nothing)  = mempty
+
+instance Traversable Option where
+  traverse f (Option (Just a)) = Option . Just <$> f a
+  traverse _ (Option Nothing)  = pure (Option Nothing)
+  
 option :: b -> (a -> b) -> Option a -> b
 option n j (Option m) = maybe n j m
 
@@ -175,5 +216,5 @@ instance Semigroup a => Semigroup (Option a) where
   Option a <> Option b = Option (a <> b) 
 
 instance Semigroup a => Monoid (Option a) where
-  mempty = Option Nothing
+  mempty = empty
   Option a `mappend` Option b = Option (a <> b)
