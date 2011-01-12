@@ -119,7 +119,7 @@ newtype Max a = Max { getMax :: a } deriving
   )
 
 instance Ord a => Semigroup (Max a) where
-  Max a <> Max b = Max (a `min` b)
+  Max a <> Max b = Max (a `max` b)
 
 instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
