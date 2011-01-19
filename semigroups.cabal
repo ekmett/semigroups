@@ -1,17 +1,21 @@
 name:          semigroups
-category:      Control, Comonads
-version:       0.3.3
+category:      Algebra, Data, Data Structures, Math
+version:       0.3.4
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
 author:        Edward A. Kmett
 maintainer:    Edward A. Kmett <ekmett@gmail.com>
 stability:     provisional
-homepage:      http://comonad.com/reader/
-copyright:     Copyright (C) 2008-2011 Edward A. Kmett, Copyright (C) 2004-2008 Dave Menendez
+homepage:      git://github.com/ekmett/semigroups/
+copyright:     Copyright (C) 2011 Edward A. Kmett
 synopsis:      Haskell 98 semigroups
 description:   Haskell 98 semigroups
 build-type:    Simple  
+
+source-repository head
+  type: git
+  location: git://github.com/ekmett/semigroups.git
 
 flag DeriveDataTypeable
   description: DeriveDataTypeable available
@@ -28,4 +32,3 @@ library
 
   exposed-modules:
     Data.Semigroup
-

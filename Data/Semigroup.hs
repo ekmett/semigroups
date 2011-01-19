@@ -27,6 +27,8 @@ module Data.Semigroup (
   -- * A better monoid for Maybe
   , Option(..)
   , option
+  -- * Difference lists of a semigroup
+  , diff
   ) where
 
 import Prelude hiding (foldr1)
@@ -218,3 +220,7 @@ instance Semigroup a => Semigroup (Option a) where
 instance Semigroup a => Monoid (Option a) where
   mempty = empty
   Option a `mappend` Option b = Option (a <> b)
+
+-- | This lets you use a 'difference list' of a semigroup as a Monoid.
+diff :: Semigroup m => m -> Endo m
+diff = Endo . (<>)
