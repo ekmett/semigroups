@@ -49,6 +49,9 @@ infixl 4 <>
 class Semigroup a where
   (<>) :: a -> a -> a
 
+instance Semigroup b => Semigroup (a -> b) where
+  f <> g = \a -> f a <> g a
+
 instance Semigroup [a] where
   (<>) = (++)
 
