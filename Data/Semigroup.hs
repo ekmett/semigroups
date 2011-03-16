@@ -40,6 +40,15 @@ import qualified Data.Monoid as Monoid
 import Data.Foldable
 import Data.Traversable
 
+import Data.Void
+import Data.Tagged
+import Data.Proxy
+import Data.Sequence (Seq, (><))
+import Data.Set (Set)
+import Data.IntSet (IntSet)
+import Data.Map (Map)
+import Data.IntMap (IntMap)
+
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
 #endif
@@ -170,6 +179,9 @@ instance Monoid m => Monoid (WrappedMonoid m) where
   mempty = WrapMonoid mempty
   WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
 
+
+-- | Option is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
+-- instead of an underlying 'Monoid'.
 newtype Option a = Option 
   { getOption :: Maybe a } deriving 
   ( Eq, Ord, Show, Read
@@ -227,3 +239,28 @@ instance Semigroup a => Monoid (Option a) where
 -- | This lets you use a 'difference list' of a semigroup as a Monoid.
 diff :: Semigroup m => m -> Endo m
 diff = Endo . (<>)
+
+instance Semigroup Void where
+  a <> _ = a
+
+instance Semigroup a => Semigroup (Tagged s a) where
+  Tagged a <> Tagged b = Tagged (a <> b)
+
+instance Semigroup (Proxy a) where
+  Proxy <> Proxy = Proxy
+
+instance Semigroup (Seq a) where
+  (<>) = (><)
+
+instance Semigroup IntSet where
+  (<>) = mappend
+
+instance Ord a => Semigroup (Set a) where
+  (<>) = mappend
+
+instance Semigroup (IntMap v) where
+  (<>) = mappend
+
+instance Ord k => Semigroup (Map k v) where
+  (<>) = mappend
+
