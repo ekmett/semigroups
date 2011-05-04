@@ -40,9 +40,6 @@ import qualified Data.Monoid as Monoid
 import Data.Foldable
 import Data.Traversable
 
-import Data.Void
-import Data.Tagged
-import Data.Proxy
 import Data.Sequence (Seq, (><))
 import Data.Set (Set)
 import Data.IntSet (IntSet)
@@ -239,15 +236,6 @@ instance Semigroup a => Monoid (Option a) where
 -- | This lets you use a 'difference list' of a semigroup as a Monoid.
 diff :: Semigroup m => m -> Endo m
 diff = Endo . (<>)
-
-instance Semigroup Void where
-  a <> _ = a
-
-instance Semigroup a => Semigroup (Tagged s a) where
-  Tagged a <> Tagged b = Tagged (a <> b)
-
-instance Semigroup (Proxy a) where
-  Proxy <> Proxy = Proxy
 
 instance Semigroup (Seq a) where
   (<>) = (><)
