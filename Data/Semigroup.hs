@@ -102,11 +102,11 @@ instance Num a => Semigroup (Product a) where
 
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
-  a             <> _ = a
+  a                    <> _ = a
 
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
-  _ <> b            = b
+  _ <> b                   = b
 
 newtype Min a = Min { getMin :: a } deriving 
   ( Eq, Ord, Bounded, Show, Read
@@ -163,7 +163,7 @@ instance Semigroup (Last a) where
 
 newtype WrappedMonoid m = WrapMonoid 
   { unwrapMonoid :: m } deriving 
-  ( Eq, Ord, Show, Read
+  ( Eq, Ord, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -178,7 +178,7 @@ instance Monoid m => Monoid (WrappedMonoid m) where
 
 
 -- | Option is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
--- instead of an underlying 'Monoid'.
+-- instead of an underlying 'Monoid'. Ideally, this type would not exist at all and we would just fix the 'Monoid' intance of 'Maybe'
 newtype Option a = Option 
   { getOption :: Maybe a } deriving 
   ( Eq, Ord, Show, Read
@@ -233,7 +233,7 @@ instance Semigroup a => Monoid (Option a) where
   mempty = empty
   Option a `mappend` Option b = Option (a <> b)
 
--- | This lets you use a 'difference list' of a semigroup as a Monoid.
+-- | This lets you use a difference list of a Semigroup as a Monoid.
 diff :: Semigroup m => m -> Endo m
 diff = Endo . (<>)
 
@@ -251,4 +251,3 @@ instance Semigroup (IntMap v) where
 
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
-
