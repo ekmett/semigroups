@@ -39,6 +39,7 @@ import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
 import Data.Foldable
 import Data.Traversable
+import Data.List.NonEmpty
 
 import Data.Sequence (Seq, (><))
 import Data.Set (Set)
@@ -54,6 +55,11 @@ infixl 4 <>
 
 class Semigroup a where
   (<>) :: a -> a -> a
+
+  sconcat :: NonEmpty a -> a
+  sconcat (a :| as) = go a as where
+    go b (c:cs) = b <> go c cs
+    go b []     = b
 
 instance Semigroup b => Semigroup (a -> b) where
   f <> g = \a -> f a <> g a
@@ -107,6 +113,9 @@ instance Semigroup (Monoid.First a) where
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
+
+instance Semigroup (NonEmpty a) where
+  (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
 
 newtype Min a = Min { getMin :: a } deriving 
   ( Eq, Ord, Bounded, Show, Read
