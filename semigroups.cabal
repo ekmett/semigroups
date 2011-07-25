@@ -1,13 +1,13 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.5.0.1
+version:       0.5.0.2
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
 author:        Edward A. Kmett
 maintainer:    Edward A. Kmett <ekmett@gmail.com>
 stability:     provisional
-homepage:      git://github.com/ekmett/semigroups/
+homepage:      http://github.com/ekmett/semigroups/
 copyright:     Copyright (C) 2011 Edward A. Kmett
 synopsis:      Haskell 98 semigroups
 description:   Haskell 98 semigroups
