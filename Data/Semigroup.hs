@@ -51,7 +51,7 @@ import Data.IntMap (IntMap)
 import Data.Data
 #endif
 
-infixl 4 <> 
+infixl 6 <> 
 
 class Semigroup a where
   (<>) :: a -> a -> a
