@@ -61,6 +61,10 @@ class Semigroup a where
     go b (c:cs) = b <> go c cs
     go b []     = b
 
+instance Semigroup () where
+  _ <> _ = ()
+  sconcat _ = ()
+
 instance Semigroup b => Semigroup (a -> b) where
   f <> g = \a -> f a <> g a
 
