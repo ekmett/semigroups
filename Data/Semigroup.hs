@@ -29,6 +29,7 @@ module Data.Semigroup (
   , option
   -- * Difference lists of a semigroup
   , diff
+  , cycle1
   ) where
 
 import Prelude hiding (foldr1)
@@ -76,6 +77,10 @@ class Semigroup a where
         | otherwise = g (x <> x) (unsafePred y `quot` 2) (x <> z)
   {-# INLINE replicate1p #-}
 
+-- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
+-- May fail to terminate for some values in some semigroups.
+cycle1 :: Semigroup m => m -> m
+cycle1 xs = xs' where xs' = xs <> xs'
 
 instance Semigroup () where
   _ <> _ = ()
