@@ -41,6 +41,7 @@ import Data.Foldable
 import Data.Traversable
 import Data.List.NonEmpty
 
+import Numeric.Natural.Internal
 import Data.Sequence (Seq, (><))
 import Data.Set (Set)
 import Data.IntSet (IntSet)
@@ -61,12 +62,29 @@ class Semigroup a where
     go b (c:cs) = b <> go c cs
     go b []     = b
 
+  -- replicate1p n r = replicate (1 + n) r
+  replicate1p :: Whole n => n -> a -> a
+  replicate1p y0 x0 = f x0 (1 Prelude.+ y0)
+    where
+      f x y
+        | even y = f (x <> x) (y `quot` 2)
+        | y == 1 = x
+        | otherwise = g (x <> x) (unsafePred y  `quot` 2) x
+      g x y z
+        | even y = g (x <> x) (y `quot` 2) z
+        | y == 1 = x <> z
+        | otherwise = g (x <> x) (unsafePred y `quot` 2) (x <> z)
+  {-# INLINE replicate1p #-}
+
+
 instance Semigroup () where
   _ <> _ = ()
   sconcat _ = ()
+  replicate1p _ _ = ()
 
 instance Semigroup b => Semigroup (a -> b) where
   f <> g = \a -> f a <> g a
+  replicate1p n f e = replicate1p n (f e)
 
 instance Semigroup [a] where
   (<>) = (++)
@@ -82,27 +100,34 @@ instance Semigroup (Either a b) where
 
 instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
   (a,b) <> (a',b') = (a<>a',b<>b')
+  replicate1p n (a,b) = (replicate1p n a, replicate1p n b)
   
 instance (Semigroup a, Semigroup b, Semigroup c) => Semigroup (a, b, c) where
   (a,b,c) <> (a',b',c') = (a<>a',b<>b',c<>c')
+  replicate1p n (a,b,c) = (replicate1p n a, replicate1p n b, replicate1p n c)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d) => Semigroup (a, b, c, d) where
   (a,b,c,d) <> (a',b',c',d') = (a<>a',b<>b',c<>c',d<>d')
+  replicate1p n (a,b,c,d) = (replicate1p n a, replicate1p n b, replicate1p n c, replicate1p n d)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d, Semigroup e) => Semigroup (a, b, c, d, e) where
   (a,b,c,d,e) <> (a',b',c',d',e') = (a<>a',b<>b',c<>c',d<>d',e<>e')
+  replicate1p n (a,b,c,d,e) = (replicate1p n a, replicate1p n b, replicate1p n c, replicate1p n d, replicate1p n e)
 
 instance Semigroup a => Semigroup (Dual a) where
   Dual a <> Dual b = Dual (b <> a)
+  replicate1p n (Dual a) = Dual (replicate1p n a)
 
 instance Semigroup (Endo a) where
   Endo f <> Endo g = Endo (f . g) 
 
 instance Semigroup All where
   All a <> All b = All (a && b)
+  replicate1p _ a = a 
 
 instance Semigroup Any where
   Any a <> Any b = Any (a || b)
+  replicate1p _ a = a 
 
 instance Num a => Semigroup (Sum a) where
   Sum a <> Sum b = Sum (a + b)
@@ -113,10 +138,12 @@ instance Num a => Semigroup (Product a) where
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
   a                    <> _ = a
+  replicate1p _ a = a 
 
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
+  replicate1p _ a = a 
 
 instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
@@ -130,6 +157,7 @@ newtype Min a = Min { getMin :: a } deriving
 
 instance Ord a => Semigroup (Min a) where
   Min a <> Min b = Min (a `min` b)
+  replicate1p _ a = a 
 
 instance (Ord a, Bounded a) => Monoid (Min a) where
   mempty = maxBound
@@ -144,6 +172,7 @@ newtype Max a = Max { getMax :: a } deriving
 
 instance Ord a => Semigroup (Max a) where
   Max a <> Max b = Max (a `max` b)
+  replicate1p _ a = a 
 
 instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
@@ -160,6 +189,7 @@ newtype First a = First { getFirst :: a } deriving
 
 instance Semigroup (First a) where
   a <> _ = a
+  replicate1p _ a = a 
 
 -- | Use @'Option' ('Last' a)@ -- to get the behavior of 'Data.Monoid.Last'
 newtype Last a = Last { getLast :: a } deriving 
@@ -171,6 +201,7 @@ newtype Last a = Last { getLast :: a } deriving
 
 instance Semigroup (Last a) where
   _ <> b = b
+  replicate1p _ a = a 
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
@@ -255,12 +286,16 @@ instance Semigroup (Seq a) where
 
 instance Semigroup IntSet where
   (<>) = mappend
+  replicate1p _ a = a 
 
 instance Ord a => Semigroup (Set a) where
   (<>) = mappend
+  replicate1p _ a = a 
 
 instance Semigroup (IntMap v) where
   (<>) = mappend
+  replicate1p _ a = a 
 
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
+  replicate1p _ a = a 

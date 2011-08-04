@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.6.1
+version:       0.7.0
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
@@ -36,3 +36,5 @@ library
   exposed-modules:
     Data.Semigroup
     Data.List.NonEmpty
+    Numeric.Natural
+    Numeric.Natural.Internal
