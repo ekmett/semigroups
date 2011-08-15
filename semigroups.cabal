@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.7.1.2
+version:       0.8
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE

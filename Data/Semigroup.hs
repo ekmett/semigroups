@@ -15,6 +15,13 @@
 -- inverses) to a type where every element did not have to have an inverse, 
 -- thus the name semigroup.
 --
+-- The use of (<>) in this module conflicts with an operator with the same
+-- name that is being exported by Data.Monoid. However, this package 
+-- re-exports (most of) the contents of Data.Monoid, so to use semigroups
+-- and monoids in the same package just
+--
+-- > import Data.Semigroup
+--
 ----------------------------------------------------------------------------
 module Data.Semigroup ( 
     Semigroup(..)
@@ -24,7 +31,8 @@ module Data.Semigroup (
   , First(..)
   , Last(..)
   , WrappedMonoid(..)
-  -- * Monoids from Data.Monoid 
+  -- * Re-exported monoids from Data.Monoid 
+  , Monoid(..)
   , Dual(..)
   , Endo(..)
   , All(..)
@@ -40,7 +48,7 @@ module Data.Semigroup (
   ) where
 
 import Prelude hiding (foldr1)
-import Data.Monoid hiding (First(..), Last(..))
+import Data.Monoid (Monoid(..),Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..),Endo(..))
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Fix
@@ -60,7 +68,7 @@ import Data.IntMap (IntMap)
 import Data.Data
 #endif
 
-infixl 6 <> 
+infixr 6 <> 
 
 class Semigroup a where
   -- | An associative operation. 
@@ -79,13 +87,13 @@ class Semigroup a where
 
   -- | Repeat a value (n + 1) times.
   --
-  -- > replicate1p n a = a <> a <> ... n + 1 times <> a
-  --
+  -- > times1p n a = a <> a <> ... <> a  -- using <> n times
+  -- 
   -- The default definition uses peasant multiplication, exploiting associativity to only
   -- require /O(log n)/ uses of @\<\>@.
   
-  replicate1p :: Whole n => n -> a -> a
-  replicate1p y0 x0 = f x0 (1 Prelude.+ y0)
+  times1p :: Whole n => n -> a -> a
+  times1p y0 x0 = f x0 (1 Prelude.+ y0)
     where
       f x y
         | even y = f (x <> x) (y `quot` 2)
@@ -95,7 +103,7 @@ class Semigroup a where
         | even y = g (x <> x) (y `quot` 2) z
         | y == 1 = x <> z
         | otherwise = g (x <> x) (unsafePred y `quot` 2) (x <> z)
-  {-# INLINE replicate1p #-}
+  {-# INLINE times1p #-}
 
 -- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
 -- May fail to terminate for some values in some semigroups.
@@ -105,11 +113,11 @@ cycle1 xs = xs' where xs' = xs <> xs'
 instance Semigroup () where
   _ <> _ = ()
   sconcat _ = ()
-  replicate1p _ _ = ()
+  times1p _ _ = ()
 
 instance Semigroup b => Semigroup (a -> b) where
   f <> g = \a -> f a <> g a
-  replicate1p n f e = replicate1p n (f e)
+  times1p n f e = times1p n (f e)
 
 instance Semigroup [a] where
   (<>) = (++)
@@ -125,34 +133,34 @@ instance Semigroup (Either a b) where
 
 instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
   (a,b) <> (a',b') = (a<>a',b<>b')
-  replicate1p n (a,b) = (replicate1p n a, replicate1p n b)
+  times1p n (a,b) = (times1p n a, times1p n b)
   
 instance (Semigroup a, Semigroup b, Semigroup c) => Semigroup (a, b, c) where
   (a,b,c) <> (a',b',c') = (a<>a',b<>b',c<>c')
-  replicate1p n (a,b,c) = (replicate1p n a, replicate1p n b, replicate1p n c)
+  times1p n (a,b,c) = (times1p n a, times1p n b, times1p n c)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d) => Semigroup (a, b, c, d) where
   (a,b,c,d) <> (a',b',c',d') = (a<>a',b<>b',c<>c',d<>d')
-  replicate1p n (a,b,c,d) = (replicate1p n a, replicate1p n b, replicate1p n c, replicate1p n d)
+  times1p n (a,b,c,d) = (times1p n a, times1p n b, times1p n c, times1p n d)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d, Semigroup e) => Semigroup (a, b, c, d, e) where
   (a,b,c,d,e) <> (a',b',c',d',e') = (a<>a',b<>b',c<>c',d<>d',e<>e')
-  replicate1p n (a,b,c,d,e) = (replicate1p n a, replicate1p n b, replicate1p n c, replicate1p n d, replicate1p n e)
+  times1p n (a,b,c,d,e) = (times1p n a, times1p n b, times1p n c, times1p n d, times1p n e)
 
 instance Semigroup a => Semigroup (Dual a) where
   Dual a <> Dual b = Dual (b <> a)
-  replicate1p n (Dual a) = Dual (replicate1p n a)
+  times1p n (Dual a) = Dual (times1p n a)
 
 instance Semigroup (Endo a) where
   Endo f <> Endo g = Endo (f . g) 
 
 instance Semigroup All where
   All a <> All b = All (a && b)
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Semigroup Any where
   Any a <> Any b = Any (a || b)
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Num a => Semigroup (Sum a) where
   Sum a <> Sum b = Sum (a + b)
@@ -163,12 +171,12 @@ instance Num a => Semigroup (Product a) where
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
   a                    <> _ = a
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
@@ -182,7 +190,7 @@ newtype Min a = Min { getMin :: a } deriving
 
 instance Ord a => Semigroup (Min a) where
   Min a <> Min b = Min (a `min` b)
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance (Ord a, Bounded a) => Monoid (Min a) where
   mempty = maxBound
@@ -197,7 +205,7 @@ newtype Max a = Max { getMax :: a } deriving
 
 instance Ord a => Semigroup (Max a) where
   Max a <> Max b = Max (a `max` b)
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
@@ -214,7 +222,7 @@ newtype First a = First { getFirst :: a } deriving
 
 instance Semigroup (First a) where
   a <> _ = a
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 -- | Use @'Option' ('Last' a)@ -- to get the behavior of 'Data.Monoid.Last'
 newtype Last a = Last { getLast :: a } deriving 
@@ -226,7 +234,7 @@ newtype Last a = Last { getLast :: a } deriving
 
 instance Semigroup (Last a) where
   _ <> b = b
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
@@ -313,16 +321,16 @@ instance Semigroup (Seq a) where
 
 instance Semigroup IntSet where
   (<>) = mappend
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Ord a => Semigroup (Set a) where
   (<>) = mappend
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Semigroup (IntMap v) where
   (<>) = mappend
-  replicate1p _ a = a 
+  times1p _ a = a 
 
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
-  replicate1p _ a = a 
+  times1p _ a = a 
