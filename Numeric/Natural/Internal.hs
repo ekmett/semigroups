@@ -8,7 +8,8 @@
 -- Stability   :  provisional
 -- Portability :  portable
 --
--- Natural Numbers
+-- This module exposes the potentially unsafe operations that are sometimes
+-- needed for efficiency: The Natural data constructor and unsafePred.
 --
 ----------------------------------------------------------------------------
 module Numeric.Natural.Internal
