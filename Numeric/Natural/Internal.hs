@@ -1,3 +1,16 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Numeric.Natural.Internal
+-- Copyright   :  (C) 2011 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  provisional
+-- Portability :  portable
+--
+-- Natural Numbers
+--
+----------------------------------------------------------------------------
 module Numeric.Natural.Internal
   ( Natural(..)
   , Whole(..)
@@ -67,6 +80,7 @@ instance Integral Natural where
   quotRem (Natural a) (Natural b) = (Natural q, Natural r) where (q,r) = quotRem a b
   toInteger = runNatural
 
+-- | A refinement of Integral to represent types that do not contain negative numbers.
 class Integral n => Whole n where
   toNatural :: n -> Natural
   unsafePred :: n -> n

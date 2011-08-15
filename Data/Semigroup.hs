@@ -8,6 +8,13 @@
 -- Stability   :  provisional
 -- Portability :  portable
 --
+-- In mathematics, a semigroup is an algebraic structure consisting of a 
+-- set together with an associative binary operation. A semigroup 
+-- generalizes a monoid in that there might not exist an identity 
+-- element. It also (originally) generalized a group (a monoid with all 
+-- inverses) to a type where every element did not have to have an inverse, 
+-- thus the name semigroup.
+--
 ----------------------------------------------------------------------------
 module Data.Semigroup ( 
     Semigroup(..)
@@ -56,14 +63,21 @@ import Data.Data
 infixl 6 <> 
 
 class Semigroup a where
+  -- | An associative operation. 
+  -- 
+  -- > (a <> b) <> c = a <> (b <> c)
   (<>) :: a -> a -> a
 
+  -- | Reduce a non-empty list with (<>)
   sconcat :: NonEmpty a -> a
   sconcat (a :| as) = go a as where
     go b (c:cs) = b <> go c cs
     go b []     = b
 
-  -- replicate1p n r = replicate (1 + n) r
+  -- | /O(log n)/ Repeat a value (n + 1) times.
+  --
+  -- > replicate1p n a = a <> a <> ... n + 1 times <> a
+  
   replicate1p :: Whole n => n -> a -> a
   replicate1p y0 x0 = f x0 (1 Prelude.+ y0)
     where
@@ -210,6 +224,8 @@ instance Semigroup (Last a) where
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
+
+-- | Provide a Semigroup for an arbitrary Monoid.
 newtype WrappedMonoid m = WrapMonoid 
   { unwrapMonoid :: m } deriving 
   ( Eq, Ord, Bounded, Show, Read

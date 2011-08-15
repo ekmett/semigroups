@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.7.1
+version:       0.7.1.1
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
@@ -10,7 +10,10 @@ stability:     provisional
 homepage:      http://github.com/ekmett/semigroups/
 copyright:     Copyright (C) 2011 Edward A. Kmett
 synopsis:      Haskell 98 semigroups
-description:   Haskell 98 semigroups
+description:   
+    Haskell 98 semigroups
+    .
+    In mathematics, a semigroup is an algebraic structure consisting of a set together with an associative binary operation. A semigroup generalizes a monoid in that there might not exist an identity element. It also (originally) generalized a group (a monoid with all inverses) to a type where every element did not have to have an inverse, thus the name semigroup.
 build-type:    Simple  
 
 source-repository head
