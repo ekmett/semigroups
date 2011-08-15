@@ -68,15 +68,21 @@ class Semigroup a where
   -- > (a <> b) <> c = a <> (b <> c)
   (<>) :: a -> a -> a
 
-  -- | Reduce a non-empty list with (<>)
+  -- | Reduce a non-empty list with @\<\>@
+  --
+  -- The default definition should be sufficient, but this can be overridden for efficiency.
+  -- 
   sconcat :: NonEmpty a -> a
   sconcat (a :| as) = go a as where
     go b (c:cs) = b <> go c cs
     go b []     = b
 
-  -- | /O(log n)/ Repeat a value (n + 1) times.
+  -- | Repeat a value (n + 1) times.
   --
   -- > replicate1p n a = a <> a <> ... n + 1 times <> a
+  --
+  -- The default definition uses peasant multiplication, exploiting associativity to only
+  -- require /O(log n)/ uses of @\<\>@.
   
   replicate1p :: Whole n => n -> a -> a
   replicate1p y0 x0 = f x0 (1 Prelude.+ y0)
