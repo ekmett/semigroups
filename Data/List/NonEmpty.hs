@@ -73,6 +73,7 @@ module Data.List.NonEmpty (
    , fromList    -- :: [a] -> NonEmpty a
    , toList      -- :: NonEmpty a -> [a]
    , nonEmpty    -- :: [a] -> Maybe (NonEmpty a)
+   , xor         -- :: NonEmpty a -> Bool
    ) where
 
 
@@ -111,6 +112,11 @@ data NonEmpty a = a :| [a] deriving
   , Data, Typeable
 #endif
   )
+
+xor :: NonEmpty Bool -> Bool
+xor (x :| xs)   = foldr xor' x xs
+  where xor' True y  = not y
+        xor' False y = y
 
 unfold :: (a -> (b, Maybe a)) -> a -> NonEmpty b
 unfold f a = case f a of
