@@ -20,16 +20,15 @@ source-repository head
   type: git
   location: git://github.com/ekmett/semigroups.git
 
-flag DeriveDataTypeable
-  description: DeriveDataTypeable available
-  default: True
-  manual: False
-
 flag base2
   default: False
   manual: False
 
 library
+  if !impl(hugs)
+    extensions: DeriveDataTypeable
+    cpp-options: -DLANGUAGE_DeriveDataTypeable
+
   if flag(base2)
     build-depends: base == 2.*
   else
@@ -39,9 +38,6 @@ library
 
   ghc-options: -Wall
   extensions: CPP
-  if flag(DeriveDataTypeable)
-    extensions: DeriveDataTypeable
-    cpp-options: -DLANGUAGE_DeriveDataTypeable
 
   exposed-modules:
     Data.Semigroup
