@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.8.1
+version:       0.8.2
 license:       BSD3
 cabal-version: >= 1.6
 license-file:  LICENSE
@@ -25,10 +25,17 @@ flag DeriveDataTypeable
   default: True
   manual: False
 
+flag base2
+  default: False
+  manual: False
+
 library
-  build-depends:
-    base >= 4 && < 5,
-    containers >= 0.3 && < 0.5
+  if flag(base2)
+    build-depends: base == 2.*
+  else
+    build-depends:
+      base >= 3 && < 5,
+      containers >= 0.3 && < 0.5
 
   ghc-options: -Wall
   extensions: CPP
