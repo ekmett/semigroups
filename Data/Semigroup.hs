@@ -1,3 +1,7 @@
+{-# LANGUAGE CPP #-}
+#ifdef LANGUAGE_DeriveDataTypeable
+{-# LANGUAGE DeriveDataTypeable #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup
@@ -168,6 +172,7 @@ instance Num a => Semigroup (Sum a) where
 instance Num a => Semigroup (Product a) where
   Product a <> Product b = Product (a * b)
 
+#if MIN_VERSION_base(3,0,0)
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
   a                    <> _ = a
@@ -177,6 +182,7 @@ instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
   times1p _ a = a
+#endif
 
 instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)

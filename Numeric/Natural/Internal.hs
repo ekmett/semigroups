@@ -19,7 +19,6 @@ module Numeric.Natural.Internal
 
 import Data.Word
 import Data.Bits
-import Text.Read
 import Data.Ix
 
 newtype Natural = Natural { runNatural :: Integer } deriving (Eq,Ord,Ix)
@@ -28,7 +27,7 @@ instance Show Natural where
   showsPrec d (Natural n) = showsPrec d n
 
 instance Read Natural where
-  readPrec = fmap Natural $ step readPrec
+  readsPrec d = map (\(n, s) -> (Natural n, s)) . readsPrec d
 
 instance Num Natural where
   Natural n + Natural m = Natural (n + m)

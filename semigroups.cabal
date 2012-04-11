@@ -1,8 +1,8 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.8.2.1
+version:       0.8.3
 license:       BSD3
-cabal-version: >= 1.6
+cabal-version: >= 1.10
 license-file:  LICENSE
 author:        Edward A. Kmett
 maintainer:    Edward A. Kmett <ekmett@gmail.com>
@@ -25,8 +25,11 @@ flag base2
   manual: False
 
 library
+  default-language: Haskell98
+  other-extensions: CPP
+
   if !impl(hugs)
-    extensions: DeriveDataTypeable
+    other-extensions: DeriveDataTypeable
     cpp-options: -DLANGUAGE_DeriveDataTypeable
 
   if flag(base2)
@@ -37,7 +40,6 @@ library
       containers >= 0.3 && < 0.5
 
   ghc-options: -Wall
-  extensions: CPP
 
   exposed-modules:
     Data.Semigroup

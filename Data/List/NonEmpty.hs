@@ -1,4 +1,7 @@
 {-# LANGUAGE CPP #-}
+#ifdef LANGUAGE_DeriveDataTypeable
+{-# LANGUAGE DeriveDataTypeable #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.List.NonEmpty
@@ -94,7 +97,7 @@ import Control.Monad
 import Data.Foldable hiding (toList)
 import qualified Data.Foldable as Foldable
 import qualified Data.List as List
-import Data.Monoid hiding (Last)
+import Data.Monoid (mappend)
 import Data.Traversable
 -- import Data.Semigroup hiding (Last)
 -- import Data.Semigroup.Foldable
@@ -134,7 +137,9 @@ uncons ~(a :| as) = (a, nonEmpty as)
 
 instance Functor NonEmpty where
   fmap f ~(a :| as) = f a :| fmap f as
+#if MIN_VERSION_base(4,2,0)
   b <$ ~(_ :| as)   = b   :| (b <$ as)
+#endif
 
 {-
 instance Extend NonEmpty where
