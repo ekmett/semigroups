@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.8.3.2
+version:       0.8.3.3
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -16,7 +16,7 @@ description:
     .
     In mathematics, a semigroup is an algebraic structure consisting of a set together with an associative binary operation. A semigroup generalizes a monoid in that there might not exist an identity element. It also (originally) generalized a group (a monoid with all inverses) to a type where every element did not have to have an inverse, thus the name semigroup.
 build-type:    Simple
-extra-source-files: .travis.yml
+extra-source-files: .travis.yml README.markdown
 
 source-repository head
   type: git
