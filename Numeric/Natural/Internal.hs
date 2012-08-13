@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Numeric.Natural.Internal
@@ -59,6 +60,9 @@ instance Bits Natural where
   shiftR (Natural n) = Natural . shiftR n
   rotateL (Natural n) = Natural . rotateL n
   rotateR (Natural n) = Natural . rotateR n
+#if MIN_VERSION_base(4,6,0)
+  popCount = popCountDefault
+#endif
 
 instance Real Natural where
   toRational (Natural a) = toRational a
