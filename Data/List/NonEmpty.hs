@@ -18,9 +18,9 @@
 ----------------------------------------------------------------------------
 
 module Data.List.NonEmpty (
-   -- * The type of streams
+   -- * The type of non-empty streams
      NonEmpty(..)
-   -- * non-empty stream transformations
+   -- * Non-empty stream transformations
    , map         -- :: (a -> b) -> NonEmpty a -> NonEmpty b
    , intersperse -- :: a -> NonEmpty a -> NonEmpty a
    , scanl       -- :: Foldable f => (b -> a -> b) -> b -> f a -> NonEmpty b
@@ -121,16 +121,24 @@ xor (x :| xs)   = foldr xor' x xs
   where xor' True y  = not y
         xor' False y = y
 
+-- | 'unfold' produces a new stream by repeatedly applying the unfolding
+-- function to the seed value to produce an element of type @b@ and a new
+-- seed value.  When the unfolding function returns 'Nothing' instead of
+-- a new seed value, the stream ends.
 unfold :: (a -> (b, Maybe a)) -> a -> NonEmpty b
 unfold f a = case f a of
   (b, Nothing) -> b :| []
   (b, Just c)  -> b <| unfold f c
 
+-- | 'nonEmpty' efficiently turns a normal list into a 'NonEmpty' stream,
+-- producing 'Nothing' if the input is empty.
 nonEmpty :: [a] -> Maybe (NonEmpty a)
 nonEmpty []     = Nothing
 nonEmpty (a:as) = Just (a :| as)
 {-# INLINE nonEmpty #-}
 
+-- | 'uncons' produces the first element of the stream, and a stream of the
+-- remaining elements, if any.
 uncons :: NonEmpty a -> (a, Maybe (NonEmpty a))
 uncons ~(a :| as) = (a, nonEmpty as)
 {-# INLINE uncons #-}
@@ -192,57 +200,63 @@ instance Semigroup (NonEmpty a) where
   (<>) = (<!>)
 -}
 
--- | Extract the first element of the stream
+-- | Extract the first element of the stream.
 head :: NonEmpty a -> a
 head ~(a :| _) = a
 {-# INLINE head #-}
 
--- | Extract the possibly empty tail of the stream
+-- | Extract the possibly-empty tail of the stream.
 tail :: NonEmpty a -> [a]
 tail ~(_ :| as) = as
 {-# INLINE tail #-}
 
--- | Extract the last element of the stream
+-- | Extract the last element of the stream.
 last :: NonEmpty a -> a
 last ~(a :| as) = List.last (a : as)
 {-# INLINE last #-}
 
--- | Extract everything except the last element of the stream
+-- | Extract everything except the last element of the stream.
 init :: NonEmpty a -> [a]
 init ~(a :| as) = List.init (a : as)
 {-# INLINE init #-}
 
--- | cons onto a stream
+-- | Prepend an element to the stream.
 (<|) :: a -> NonEmpty a -> NonEmpty a 
 a <| ~(b :| bs) = a :| b : bs
 {-# INLINE (<|) #-}
 
+-- | Synonym for '<|'.
 cons :: a -> NonEmpty a -> NonEmpty a
 cons = (<|)
 {-# INLINE cons #-}
 
--- | Sort a stream
+-- | Sort a stream.
 sort :: Ord a => NonEmpty a -> NonEmpty a 
 sort = lift List.sort
 {-# INLINE sort #-}
 
--- | Converts an non-empty list to a stream.
+-- | Converts a normal list to a 'NonEmpty' stream.
+--
+-- Raises an error if given an empty list.
 fromList :: [a] -> NonEmpty a 
 fromList (a:as) = a :| as
 fromList [] = error "NonEmpty.fromList: empty list"
 {-# INLINE fromList #-}
 
--- | Convert a stream to a list efficiently
+-- | Convert a stream to a normal list efficiently.
 toList :: NonEmpty a -> [a]
 toList ~(a :| as) = a : as
 {-# INLINE toList #-}
 
--- | Lift list operations to work on a 'NonEmpty' stream
+-- | Lift list operations to work on a 'NonEmpty' stream.
+--
+-- /Beware/: If the provided function returns an empty list,
+-- this will raise an error.
 lift :: Foldable f => ([a] -> [b]) -> f a -> NonEmpty b
 lift f = fromList . f . Foldable.toList 
 {-# INLINE lift #-}
 
--- | map a function over a 'NonEmpty' stream
+-- | Map a function over a 'NonEmpty' stream.
 map :: (a -> b) -> NonEmpty a -> NonEmpty b
 map f ~(a :| as) = f a :| fmap f as 
 {-# INLINE map #-}
@@ -259,7 +273,9 @@ tails   :: Foldable f => f a -> NonEmpty [a]
 tails = fromList . List.tails . Foldable.toList
 {-# INLINE tails #-}
 
--- | 'insert' an item into a 'NonEmpty'
+-- | @'insert' x xs@ inserts @x@ into the last position in @xs@ where it
+-- is still less than or equal to the next element. In particular, if the
+-- list is sorted beforehand, the result will also be sorted.
 insert  :: (Foldable f, Ord a) => a -> f a -> NonEmpty a
 insert a = fromList . List.insert a . Foldable.toList
 {-# INLINE insert #-}
@@ -296,6 +312,9 @@ scanr1 :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
 scanr1 f ~(a :| as) = fromList (List.scanr1 f (a:as))
 {-# INLINE scanr1 #-}
 
+-- | 'intersperse x xs' alternates elements of the list with copies of @x@.
+--
+-- > intersperse 0 (1 :| [2,3]) == 1 :| [0,2,0,3]
 intersperse :: a -> NonEmpty a -> NonEmpty a
 intersperse a ~(b :| bs) = b :| case bs of 
     [] -> []
@@ -305,7 +324,7 @@ intersperse a ~(b :| bs) = b :| case bs of
 -- | @'iterate' f x@ produces the infinite sequence
 -- of repeated applications of @f@ to @x@.
 --
--- > iterate f x = [x, f x, f (f x), ..]
+-- > iterate f x = x :| [f x, f (f x), ..]
 iterate :: (a -> a) -> a -> NonEmpty a
 iterate f a = a :| List.iterate f (f a)
 {-# INLINE iterate #-}
@@ -317,7 +336,7 @@ cycle :: NonEmpty a -> NonEmpty a
 cycle = fromList . List.cycle . toList 
 {-# INLINE cycle #-}
 
--- | 'reverse' a finite NonEmpty
+-- | 'reverse' a finite NonEmpty stream.
 reverse :: NonEmpty a -> NonEmpty a
 reverse = lift List.reverse
 {-# INLINE reverse #-}
@@ -329,18 +348,12 @@ repeat a = a :| List.repeat a
 {-# INLINE repeat #-}
 
 -- | @'take' n xs@ returns the first @n@ elements of @xs@.
---
--- /Beware/: passing a negative integer as the first argument will
--- cause an error.
 take :: Int -> NonEmpty a -> [a]
 take n = List.take n . toList 
 {-# INLINE take #-}
 
 -- | @'drop' n xs@ drops the first @n@ elements off the front of
 -- the sequence @xs@.
---
--- /Beware/: passing a negative integer as the first argument will
--- cause an error.
 drop :: Int -> NonEmpty a -> [a]
 drop n = List.drop n . toList
 {-# INLINE drop #-}
@@ -348,8 +361,8 @@ drop n = List.drop n . toList
 -- | @'splitAt' n xs@ returns a pair consisting of the prefix of @xs@ 
 -- of length @n@ and the remaining stream immediately following this prefix.
 --
--- /Beware/: passing a negative integer as the first argument will
--- cause an error.
+-- > 'splitAt' n xs == ('take' n xs, 'drop' n xs)
+-- > xs == ys ++ zs where (ys, zs) = 'splitAt' n xs
 splitAt :: Int -> NonEmpty a -> ([a],[a])
 splitAt n = List.splitAt n . toList
 {-# INLINE splitAt #-}
@@ -366,40 +379,47 @@ dropWhile :: (a -> Bool) -> NonEmpty a -> [a]
 dropWhile p = List.dropWhile p . toList
 {-# INLINE dropWhile #-}
 
--- | 'span' @p@ @xs@ returns the longest prefix of @xs@ that satisfies
+-- | @'span' p xs@ returns the longest prefix of @xs@ that satisfies
 -- @p@, together with the remainder of the stream.
+--
+-- > 'span' p xs == ('takeWhile' p xs, 'dropWhile' p xs)
+-- > xs == ys ++ zs where (ys, zs) = 'span' p xs
 span :: (a -> Bool) -> NonEmpty a -> ([a], [a])
 span p = List.span p . toList
 {-# INLINE span #-}
 
--- | The 'break' @p@ function is equivalent to 'span' @not . p@.
+-- | The @'break' p@ function is equivalent to @'span' (not . p)@.
 break :: (a -> Bool) -> NonEmpty a -> ([a], [a])
 break p = span (not . p)
 {-# INLINE break #-}
 
--- | 'filter' @p@ @xs@, removes any elements from @xs@ that do not satisfy @p@.
+-- | @'filter' p xs@ removes any elements from @xs@ that do not satisfy @p@.
 filter :: (a -> Bool) -> NonEmpty a -> [a]
 filter p = List.filter p . toList
 {-# INLINE filter #-}
 
 -- | The 'partition' function takes a predicate @p@ and a stream
--- @xs@, and returns a pair of streams. The first stream corresponds
--- to the elements of @xs@ for which @p@ holds; the second stream
--- corresponds to the elements of @xs@ for which @p@ does not hold.
+-- @xs@, and returns a pair of lists. The first list corresponds to the
+-- elements of @xs@ for which @p@ holds; the second corresponds to the
+-- elements of @xs@ for which @p@ does not hold.
+--
+-- > 'partition' p xs = ('filter' p xs, 'filter' (not . p) xs)
 partition :: (a -> Bool) -> NonEmpty a -> ([a], [a])
-partition p = List.partition p . toList 
+partition p = List.partition p . toList
 {-# INLINE partition #-}
 
--- | The 'group' function takes a stream and returns a stream of
--- lists such that flattening the resulting stream is equal to the
--- argument.  Moreover, each sublist in the resulting stream
--- contains only equal elements.  For example,
+-- | The 'group' function takes a stream and returns a list of
+-- streams such that flattening the resulting list is equal to the
+-- argument.  Moreover, each stream in the resulting list
+-- contains only equal elements.  For example, in list notation:
 --
--- > group $ cycle "Mississippi" = "M" : "i" : "ss" : "i" : "ss" : "i" : "pp" : "i" : "M" : "i" : ...
+-- > 'group' $ 'cycle' "Mississippi" = "M" : "i" : "ss" : "i" : "ss" : "i" : "pp" : "i" : "M" : "i" : ...
 group :: (Foldable f, Eq a) => f a -> [NonEmpty a]
 group = groupBy (==)
 {-# INLINE group #-}
 
+-- | 'groupBy' operates like 'group', but uses the provided equality
+-- predicate instead of `==`.
 groupBy :: Foldable f => (a -> a -> Bool) -> f a -> [NonEmpty a]
 groupBy eq0 = go eq0 . Foldable.toList
   where 
@@ -407,10 +427,13 @@ groupBy eq0 = go eq0 . Foldable.toList
     go eq (x : xs) = (x :| ys) : groupBy eq zs
       where (ys, zs) = List.span (eq x) xs
   
+-- | 'group1' operates like 'group', but uses the knowledge that its
+-- input is non-empty to produce guaranteed non-empty output.
 group1 :: Eq a => NonEmpty a -> NonEmpty (NonEmpty a)
 group1 = groupBy1 (==)
 {-# INLINE group1 #-}
 
+-- | 'groupBy1' is to 'group1' as 'groupBy' is to 'group'.
 groupBy1 :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty (NonEmpty a)
 groupBy1 eq (x :| xs) = (x :| ys) :| groupBy eq zs
   where (ys, zs) = List.span (eq x) xs
@@ -426,8 +449,7 @@ isPrefixOf (y:ys) (x :| xs) = (y == x) && List.isPrefixOf ys xs
 -- | @xs !! n@ returns the element of the stream @xs@ at index
 -- @n@. Note that the head of the stream has index 0.
 --
--- /Beware/: passing a negative integer as the first argument will cause
--- an error.
+-- /Beware/: a negative or out-of-bounds index will cause an error.
 (!!) :: NonEmpty a -> Int -> a
 (!!) ~(x :| xs) n 
   | n == 0 = x
@@ -435,15 +457,15 @@ isPrefixOf (y:ys) (x :| xs) = (y == x) && List.isPrefixOf ys xs
   | otherwise = error "NonEmpty.!! negative argument"
 {-# INLINE (!!) #-}
 
--- | The 'zip' function takes two streams and returns a list of
+-- | The 'zip' function takes two streams and returns a stream of
 -- corresponding pairs.
 zip :: NonEmpty a -> NonEmpty b -> NonEmpty (a,b)
 zip ~(x :| xs) ~(y :| ys) = (x, y) :| List.zip xs ys
 {-# INLINE zip #-}
 
 -- | The 'zipWith' function generalizes 'zip'. Rather than tupling
--- the functions, the elements are combined using the function
--- passed as the first argument to 'zipWith'.
+-- the elements, the elements are combined using the function
+-- passed as the first argument.
 zipWith :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
 zipWith f ~(x :| xs) ~(y :| ys) = f x y :| List.zipWith f xs ys
 {-# INLINE zipWith #-}
@@ -455,17 +477,22 @@ unzip xs = (fst <$> xs, snd <$> xs)
 
 -- | The 'words' function breaks a stream of characters into a
 -- stream of words, which were delimited by white space.
+--
+-- /Beware/: if the input contains no words (i.e. is entirely
+-- whitespace), this will cause an error.
 words :: NonEmpty Char -> NonEmpty String
 words = lift List.words
 {-# INLINE words #-}
 
 -- | The 'unwords' function is an inverse operation to 'words'. It
 -- joins words with separating spaces.
+--
+-- /Beware/: the input @(\"\" :| [])@ will cause an error.
 unwords :: NonEmpty String -> NonEmpty Char
 unwords = lift List.unwords
 {-# INLINE unwords #-}
 
--- | The 'lines' function breaks a stream of characters into a list
+-- | The 'lines' function breaks a stream of characters into a stream
 -- of strings at newline characters. The resulting strings do not
 -- contain newlines.
 lines :: NonEmpty Char -> NonEmpty String
