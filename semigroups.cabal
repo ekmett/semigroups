@@ -45,6 +45,7 @@ library
 
   exposed-modules:
     Data.Semigroup
+    Data.Semigroup.Act
     Data.List.NonEmpty
     Numeric.Natural
     Numeric.Natural.Internal
