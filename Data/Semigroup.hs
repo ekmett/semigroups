@@ -125,6 +125,9 @@ instance Semigroup b => Semigroup (a -> b) where
 
 instance Semigroup [a] where
   (<>) = (++)
+  times1p n x = rep n where
+    rep 0 = x
+    rep i = x ++ rep (i - 1)
 
 instance Semigroup a => Semigroup (Maybe a) where
   Nothing <> b       = b
