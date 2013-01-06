@@ -29,11 +29,11 @@ module Data.List.NonEmpty (
    , scanr1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
    --, transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
    -- * Basic functions
-   , head        -- :: NonEmpty a -> a  
+   , head        -- :: NonEmpty a -> a
    , tail        -- :: NonEmpty a -> [a]
    , last        -- :: NonEmpty a -> a
    , init        -- :: NonEmpty a -> [a]
-   , (<|), cons  -- :: a -> NonEmpty a -> NonEmpty a 
+   , (<|), cons  -- :: a -> NonEmpty a -> NonEmpty a
    , uncons      -- :: NonEmpty a -> (a, Maybe (NonEmpty a))
    , sort        -- :: NonEmpty a -> NonEmpty a
    , reverse     -- :: NonEmpty a -> NonEmpty a
@@ -41,7 +41,7 @@ module Data.List.NonEmpty (
    , tails       -- :: Foldable f => f a -> NonEmpty a
    -- * Building streams
    , iterate     -- :: (a -> a) -> a -> NonEmpty a
-   , repeat      -- :: a -> NonEmpty a 
+   , repeat      -- :: a -> NonEmpty a
    , cycle       -- :: NonEmpty a -> NonEmpty a
    , unfold      -- :: (a -> (b, Maybe a) -> a -> NonEmpty b
    , insert      -- :: (Foldable f, Ord a) => a -> f a -> NonEmpty a
@@ -109,7 +109,7 @@ import Data.Data
 
 infixr 5 :|, <|
 
-data NonEmpty a = a :| [a] deriving 
+data NonEmpty a = a :| [a] deriving
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
@@ -157,7 +157,7 @@ instance Extend NonEmpty where
 
 instance Comonad NonEmpty where
   extract ~(a :| _) = a
-  
+
 instance Apply NonEmpty where
   (<.>) = ap
 
@@ -186,7 +186,7 @@ instance Traversable1 NonEmpty where
 
 instance Foldable NonEmpty where
   foldr f z ~(a :| as) = f a (foldr f z as)
-  foldl f z ~(a :| as) = foldl f (f z a) as 
+  foldl f z ~(a :| as) = foldl f (f z a) as
   foldl1 f ~(a :| as) = foldl f a as
   foldMap f ~(a :| as) = f a `mappend` foldMap f as
   fold ~(m :| ms) = m `mappend` fold ms
@@ -221,7 +221,7 @@ init ~(a :| as) = List.init (a : as)
 {-# INLINE init #-}
 
 -- | Prepend an element to the stream.
-(<|) :: a -> NonEmpty a -> NonEmpty a 
+(<|) :: a -> NonEmpty a -> NonEmpty a
 a <| ~(b :| bs) = a :| b : bs
 {-# INLINE (<|) #-}
 
@@ -231,14 +231,14 @@ cons = (<|)
 {-# INLINE cons #-}
 
 -- | Sort a stream.
-sort :: Ord a => NonEmpty a -> NonEmpty a 
+sort :: Ord a => NonEmpty a -> NonEmpty a
 sort = lift List.sort
 {-# INLINE sort #-}
 
 -- | Converts a normal list to a 'NonEmpty' stream.
 --
 -- Raises an error if given an empty list.
-fromList :: [a] -> NonEmpty a 
+fromList :: [a] -> NonEmpty a
 fromList (a:as) = a :| as
 fromList [] = error "NonEmpty.fromList: empty list"
 {-# INLINE fromList #-}
@@ -253,12 +253,12 @@ toList ~(a :| as) = a : as
 -- /Beware/: If the provided function returns an empty list,
 -- this will raise an error.
 lift :: Foldable f => ([a] -> [b]) -> f a -> NonEmpty b
-lift f = fromList . f . Foldable.toList 
+lift f = fromList . f . Foldable.toList
 {-# INLINE lift #-}
 
 -- | Map a function over a 'NonEmpty' stream.
 map :: (a -> b) -> NonEmpty a -> NonEmpty b
-map f ~(a :| as) = f a :| fmap f as 
+map f ~(a :| as) = f a :| fmap f as
 {-# INLINE map #-}
 
 -- | The 'inits' function takes a stream @xs@ and returns all the
@@ -316,7 +316,7 @@ scanr1 f ~(a :| as) = fromList (List.scanr1 f (a:as))
 --
 -- > intersperse 0 (1 :| [2,3]) == 1 :| [0,2,0,3]
 intersperse :: a -> NonEmpty a -> NonEmpty a
-intersperse a ~(b :| bs) = b :| case bs of 
+intersperse a ~(b :| bs) = b :| case bs of
     [] -> []
     _ -> a : List.intersperse a bs
 {-# INLINE intersperse #-}
@@ -332,8 +332,8 @@ iterate f a = a :| List.iterate f (f a)
 -- | @'cycle' xs@ returns the infinite repetition of @xs@:
 --
 -- > cycle [1,2,3] = 1 :| [2,3,1,2,3,...]
-cycle :: NonEmpty a -> NonEmpty a 
-cycle = fromList . List.cycle . toList 
+cycle :: NonEmpty a -> NonEmpty a
+cycle = fromList . List.cycle . toList
 {-# INLINE cycle #-}
 
 -- | 'reverse' a finite NonEmpty stream.
@@ -349,7 +349,7 @@ repeat a = a :| List.repeat a
 
 -- | @'take' n xs@ returns the first @n@ elements of @xs@.
 take :: Int -> NonEmpty a -> [a]
-take n = List.take n . toList 
+take n = List.take n . toList
 {-# INLINE take #-}
 
 -- | @'drop' n xs@ drops the first @n@ elements off the front of
@@ -358,7 +358,7 @@ drop :: Int -> NonEmpty a -> [a]
 drop n = List.drop n . toList
 {-# INLINE drop #-}
 
--- | @'splitAt' n xs@ returns a pair consisting of the prefix of @xs@ 
+-- | @'splitAt' n xs@ returns a pair consisting of the prefix of @xs@
 -- of length @n@ and the remaining stream immediately following this prefix.
 --
 -- > 'splitAt' n xs == ('take' n xs, 'drop' n xs)
@@ -422,11 +422,11 @@ group = groupBy (==)
 -- predicate instead of `==`.
 groupBy :: Foldable f => (a -> a -> Bool) -> f a -> [NonEmpty a]
 groupBy eq0 = go eq0 . Foldable.toList
-  where 
+  where
     go _  [] = []
     go eq (x : xs) = (x :| ys) : groupBy eq zs
       where (ys, zs) = List.span (eq x) xs
-  
+
 -- | 'group1' operates like 'group', but uses the knowledge that its
 -- input is non-empty to produce guaranteed non-empty output.
 group1 :: Eq a => NonEmpty a -> NonEmpty (NonEmpty a)
@@ -451,7 +451,7 @@ isPrefixOf (y:ys) (x :| xs) = (y == x) && List.isPrefixOf ys xs
 --
 -- /Beware/: a negative or out-of-bounds index will cause an error.
 (!!) :: NonEmpty a -> Int -> a
-(!!) ~(x :| xs) n 
+(!!) ~(x :| xs) n
   | n == 0 = x
   | n > 0  = xs List.!! (n - 1)
   | otherwise = error "NonEmpty.!! negative argument"

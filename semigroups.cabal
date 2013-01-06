@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.8.6
+version:       0.9
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -38,13 +38,13 @@ library
     build-depends: base == 2.*
   else
     build-depends:
-      base >= 3 && < 5,
-      containers >= 0.3 && < 0.6
+      base       >= 3 && < 5,
+      containers >= 0.3 && < 0.6,
+      nats       >= 0.1
 
-  ghc-options: -Wall
+  hs-source-dirs: src
+  ghc-options:    -Wall
 
   exposed-modules:
     Data.Semigroup
     Data.List.NonEmpty
-    Numeric.Natural
-    Numeric.Natural.Internal
