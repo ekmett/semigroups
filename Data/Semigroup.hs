@@ -154,6 +154,11 @@ instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d, Semigroup e) => Se
   (a,b,c,d,e) <> (a',b',c',d',e') = (a<>a',b<>b',c<>c',d<>d',e<>e')
   times1p n (a,b,c,d,e) = (times1p n a, times1p n b, times1p n c, times1p n d, times1p n e)
 
+instance Semigroup Ordering where
+  LT <> _ = LT
+  EQ <> y = y
+  GT <> _ = GT
+
 instance Semigroup a => Semigroup (Dual a) where
   Dual a <> Dual b = Dual (b <> a)
   times1p n (Dual a) = Dual (times1p n a)
