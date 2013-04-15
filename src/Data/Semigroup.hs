@@ -35,6 +35,7 @@ module Data.Semigroup (
   , First(..)
   , Last(..)
   , WrappedMonoid(..)
+  , times
   -- * Re-exported monoids from Data.Monoid
   , Monoid(..)
   , Dual(..)
@@ -95,6 +96,8 @@ class Semigroup a where
   --
   -- The default definition uses peasant multiplication, exploiting associativity to only
   -- require /O(log n)/ uses of @\<\>@.
+  --
+  -- See also 'times'.
 
   times1p :: Whole n => n -> a -> a
   times1p y0 x0 = f x0 (1 Prelude.+ y0)
@@ -268,6 +271,16 @@ instance Monoid m => Semigroup (WrappedMonoid m) where
 instance Monoid m => Monoid (WrappedMonoid m) where
   mempty = WrapMonoid mempty
   WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
+
+-- | Repeat a value @n@ times.
+--
+-- > times n a = a <> a <> ... <> a  -- using <> (n-1) times
+--
+-- Implemented using 'times1p'.
+times :: (Whole n, Monoid a) => n -> a -> a
+times n x | n == 0    = mempty
+          | otherwise = unwrapMonoid . times1p (unsafePred n) . WrapMonoid $ x
+{-# INLINE times #-}
 
 
 -- | Option is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
