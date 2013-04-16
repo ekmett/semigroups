@@ -35,7 +35,7 @@ module Data.Semigroup (
   , First(..)
   , Last(..)
   , WrappedMonoid(..)
-  , times
+  , timesN
   -- * Re-exported monoids from Data.Monoid
   , Monoid(..)
   , Dual(..)
@@ -277,10 +277,10 @@ instance Monoid m => Monoid (WrappedMonoid m) where
 -- > times n a = a <> a <> ... <> a  -- using <> (n-1) times
 --
 -- Implemented using 'times1p'.
-times :: (Whole n, Monoid a) => n -> a -> a
-times n x | n == 0    = mempty
-          | otherwise = unwrapMonoid . times1p (unsafePred n) . WrapMonoid $ x
-{-# INLINE times #-}
+timesN :: (Whole n, Monoid a) => n -> a -> a
+timesN n x | n == 0    = mempty
+           | otherwise = unwrapMonoid . times1p (unsafePred n) . WrapMonoid $ x
+{-# INLINE timesN #-}
 
 
 -- | Option is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
