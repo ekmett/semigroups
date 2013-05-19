@@ -83,7 +83,7 @@ class Semigroup a where
   --
   -- > (a <> b) <> c = a <> (b <> c)
   --
-  -- If out type is also a 'Monoid' we further require
+  -- If @a@ is also a 'Monoid' we further require
   --
   -- > (<>) = mappend
   (<>) :: a -> a -> a
