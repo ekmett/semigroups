@@ -1,3 +1,8 @@
+0.9.2
+-----
+* Added a `DefaultSignature` for `(<>)` in terms of `mappend`.
+
+
 0.9.1
 -----
 * Added `timesN`.
