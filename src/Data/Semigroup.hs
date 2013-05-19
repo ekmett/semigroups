@@ -82,6 +82,10 @@ class Semigroup a where
   -- | An associative operation.
   --
   -- > (a <> b) <> c = a <> (b <> c)
+  --
+  -- If out type is also a 'Monoid' we further require
+  --
+  -- > (<>) = mappend
   (<>) :: a -> a -> a
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
   default (<>) :: Monoid a => a -> a -> a
