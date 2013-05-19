@@ -2,6 +2,9 @@
 #ifdef LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE DefaultSignatures #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup
@@ -80,6 +83,10 @@ class Semigroup a where
   --
   -- > (a <> b) <> c = a <> (b <> c)
   (<>) :: a -> a -> a
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+  default (<>) :: Monoid a => a -> a -> a
+  (<>) = mappend
+#endif
 
   -- | Reduce a non-empty list with @\<\>@
   --
