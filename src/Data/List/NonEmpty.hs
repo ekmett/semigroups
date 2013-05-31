@@ -520,5 +520,5 @@ nub = nubBy (==)
 -- user-supplied equality predicate instead of the overloaded '=='
 -- function.
 nubBy :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty a
-nubBy eq (a :| as) = a :| List.nubBy eq (List.filter (\y -> not (eq x y)) xs)
+nubBy eq (a :| as) = a :| List.nubBy eq (List.filter (\b -> not (eq a b)) as)
 
