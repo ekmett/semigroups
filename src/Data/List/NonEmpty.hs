@@ -36,6 +36,7 @@ module Data.List.NonEmpty (
    , init        -- :: NonEmpty a -> [a]
    , (<|), cons  -- :: a -> NonEmpty a -> NonEmpty a
    , uncons      -- :: NonEmpty a -> (a, Maybe (NonEmpty a))
+   , unfoldr     -- :: (a -> (b, Maybe a)) -> a -> NonEmpty b
    , sort        -- :: NonEmpty a -> NonEmpty a
    , reverse     -- :: NonEmpty a -> NonEmpty a
    , inits       -- :: Foldable f => f a -> NonEmpty a
@@ -153,6 +154,13 @@ nonEmpty (a:as) = Just (a :| as)
 uncons :: NonEmpty a -> (a, Maybe (NonEmpty a))
 uncons ~(a :| as) = (a, nonEmpty as)
 {-# INLINE uncons #-}
+
+unfoldr :: (a -> (b, Maybe a)) -> a -> NonEmpty b
+unfoldr f a = case f a of
+  (b, mc) -> b :| maybe [] go mc
+ where
+    go c = case f c of
+      (d, me) -> d : maybe [] go me
 
 instance Functor NonEmpty where
   fmap f ~(a :| as) = f a :| fmap f as
