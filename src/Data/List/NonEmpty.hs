@@ -61,6 +61,9 @@ module Data.List.NonEmpty (
    , groupBy1    -- :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty (NonEmpty a)
    -- * Sublist predicates
    , isPrefixOf  -- :: Foldable f => f a -> NonEmpty a -> Bool
+   -- * \"Set\" operations
+   , nub         -- :: Eq a => NonEmpty a -> NonEmpty a
+   , nubBy       -- :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty a
    -- * Indexing streams
    , (!!)        -- :: NonEmpty a -> Int -> a
    -- * Zipping and unzipping streams
@@ -504,3 +507,18 @@ lines = lift List.lines
 unlines :: NonEmpty String -> NonEmpty Char
 unlines = lift List.unlines
 {-# INLINE unlines #-}
+
+-- | The 'nub' function removes duplicate elements from a list. In
+-- particular, it keeps only the first occurence of each element.
+-- (The name 'nub' means \'essence\'.)
+-- It is a special case of 'nubBy', which allows the programmer to
+-- supply their own inequality test.
+nub :: Eq a => NonEmpty a -> NonEmpty a
+nub = nubBy (==)
+
+-- | The 'nubBy' function behaves just like 'nub', except it uses a
+-- user-supplied equality predicate instead of the overloaded '=='
+-- function.
+nubBy :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty a
+nubBy eq (a :| as) = a :| List.nubBy eq (List.filter (\b -> not (eq a b)) as)
+
