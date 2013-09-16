@@ -72,6 +72,15 @@ import Data.IntSet (IntSet)
 import Data.Map (Map)
 import Data.IntMap (IntMap)
 
+#ifndef BASE2
+import Data.ByteString as Strict
+import Data.ByteString.Lazy as Lazy
+import Data.Text as Strict
+import Data.Text.Lazy as Lazy
+import Data.Hashable
+import Data.HashMap.Lazy as Lazy
+#endif
+
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
 #endif
@@ -266,6 +275,23 @@ instance Semigroup (Last a) where
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
+#ifndef BASE2
+instance Semigroup Strict.ByteString where
+  (<>) = mappend
+
+instance Semigroup Lazy.ByteString where
+  (<>) = mappend
+
+instance Semigroup Strict.Text where
+  (<>) = mappend
+
+instance Semigroup Lazy.Text where
+  (<>) = mappend
+
+instance (Hashable k, Eq k) => Semigroup (Lazy.HashMap k a) where
+  (<>) = mappend
+#endif
+
 
 -- | Provide a Semigroup for an arbitrary Monoid.
 newtype WrappedMonoid m = WrapMonoid
@@ -326,7 +352,7 @@ instance Alternative Option where
   a <|> _ = a
 
 instance MonadPlus Option where
-  mzero = empty
+  mzero = Option Nothing
   mplus = (<|>)
 
 instance MonadFix Option where
@@ -347,7 +373,7 @@ instance Semigroup a => Semigroup (Option a) where
   Option a <> Option b = Option (a <> b)
 
 instance Semigroup a => Monoid (Option a) where
-  mempty = empty
+  mempty = Option Nothing
   Option a `mappend` Option b = Option (a <> b)
 
 -- | This lets you use a difference list of a Semigroup as a Monoid.
