@@ -27,7 +27,9 @@ module Data.List.NonEmpty (
    , scanr       -- :: Foldable f => (a -> b -> b) -> b -> f a -> NonEmpty b
    , scanl1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
    , scanr1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
-   -- , transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
+   , transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
+   , sortBy      -- :: (a -> a -> Ordering) -> NonEmpty a -> NonEmpty a
+   , sortOn      -- :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
    -- * Basic functions
    , length      -- :: NonEmpty a -> Int
    , head        -- :: NonEmpty a -> a
@@ -105,6 +107,7 @@ import Data.Foldable hiding (toList)
 import qualified Data.Foldable as Foldable
 import qualified Data.List as List
 import Data.Monoid (mappend)
+import Data.Ord (comparing)
 import Data.Traversable
 -- import Data.Semigroup hiding (Last)
 -- import Data.Semigroup.Foldable
@@ -530,3 +533,20 @@ nub = nubBy (==)
 nubBy :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty a
 nubBy eq (a :| as) = a :| List.nubBy eq (List.filter (\b -> not (eq a b)) as)
 
+-- | 'transpose' for NonEmtpy, behaves the same as 'Data.List.transpose'
+-- The rows/columns need not be the same length, in which case
+-- > transpose . transpose /= id
+transpose :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
+transpose = fmap fromList
+          . fromList . List.transpose . Foldable.toList
+          . fmap Foldable.toList
+
+-- | 'sortBy' for NonEmtpy, behaves the same as 'Data.List.sortBy'
+sortBy :: (a -> a -> Ordering) -> NonEmpty a -> NonEmpty a
+sortBy f = lift (List.sortBy f)
+
+-- | 'sortOn' for NonEmtpy, behaves the same as:
+--
+-- > sortBy . comparing
+sortOn :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
+sortOn = sortBy . comparing
