@@ -27,8 +27,9 @@ module Data.List.NonEmpty (
    , scanr       -- :: Foldable f => (a -> b -> b) -> b -> f a -> NonEmpty b
    , scanl1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
    , scanr1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
-   --, transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
+   -- , transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
    -- * Basic functions
+   , length      -- :: NonEmpty a -> Int
    , head        -- :: NonEmpty a -> a
    , tail        -- :: NonEmpty a -> [a]
    , last        -- :: NonEmpty a -> a
@@ -83,6 +84,7 @@ module Data.List.NonEmpty (
    ) where
 
 
+import qualified Prelude
 import Prelude hiding
   ( head, tail, map, reverse
   , scanl, scanl1, scanr, scanr1
@@ -91,7 +93,9 @@ import Prelude hiding
   , (!!), zip, unzip, zipWith, words
   , unwords, lines, unlines, break, span
   , splitAt, foldr, foldl, last, init
+  , length
   )
+
 
 import Control.Applicative
 -- import Control.Comonad
@@ -118,6 +122,10 @@ data NonEmpty a = a :| [a] deriving
   , Data, Typeable
 #endif
   )
+
+length :: NonEmpty a -> Int
+length (_ :| xs) = 1 + Prelude.length xs
+{-# INLINE length #-}
 
 xor :: NonEmpty Bool -> Bool
 xor (x :| xs)   = foldr xor' x xs
