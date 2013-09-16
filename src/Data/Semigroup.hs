@@ -249,7 +249,7 @@ instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
   mappend = (<>)
 
--- | Use @'Option' ('First' a)@ -- to get the behavior of 'Data.Monoid.First'
+-- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -262,7 +262,7 @@ instance Semigroup (First a) where
   a <> _ = a
   times1p _ a = a
 
--- | Use @'Option' ('Last' a)@ -- to get the behavior of 'Data.Monoid.Last'
+-- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -292,7 +292,6 @@ instance Semigroup Lazy.Text where
 instance (Hashable k, Eq k) => Semigroup (Lazy.HashMap k a) where
   (<>) = mappend
 #endif
-
 
 -- | Provide a Semigroup for an arbitrary Monoid.
 newtype WrappedMonoid m = WrapMonoid
@@ -367,6 +366,7 @@ instance Traversable Option where
   traverse f (Option (Just a)) = Option . Just <$> f a
   traverse _ (Option Nothing)  = pure (Option Nothing)
 
+-- | Fold an 'Option' case-wise, just like 'maybe'.
 option :: b -> (a -> b) -> Option a -> b
 option n j (Option m) = maybe n j m
 
