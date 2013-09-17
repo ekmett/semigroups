@@ -80,6 +80,7 @@ import Data.Text as Strict
 import Data.Text.Lazy as Lazy
 import Data.Hashable
 import Data.HashMap.Lazy as Lazy
+import Data.HashSet
 #endif
 
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -291,6 +292,10 @@ instance Semigroup Lazy.Text where
 
 instance (Hashable k, Eq k) => Semigroup (Lazy.HashMap k a) where
   (<>) = mappend
+
+instance (Hashable a, Eq a) => Semigroup (HashSet a) where
+  (<>) = mappend
+  times1p _ a = a
 #endif
 
 -- | Provide a Semigroup for an arbitrary Monoid.
