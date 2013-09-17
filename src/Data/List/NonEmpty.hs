@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.List.NonEmpty
--- Copyright   :  (C) 2011 Edward Kmett,
+-- Copyright   :  (C) 2011-2013 Edward Kmett,
 --                (C) 2010 Tony Morris, Oliver Taylor, Eelis van der Weegen
 -- License     :  BSD-style (see the file LICENSE)
 --
