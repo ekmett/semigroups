@@ -205,6 +205,9 @@ instance Num a => Semigroup (Sum a) where
 instance Num a => Semigroup (Product a) where
   Product a <> Product b = Product (a * b)
 
+instance Semigroup a => Semigroup (Const a b) where
+  Const a <> Const b = Const (a <> b)
+
 #if MIN_VERSION_base(3,0,0)
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
