@@ -302,7 +302,7 @@ insert a = fromList . List.insert a . Foldable.toList
 
 -- | @'some1' x@ sequences @x@ one or more times.
 some1 :: Alternative f => f a -> f (NonEmpty a)
-some1 x = (:|) <$> x <*> some x
+some1 x = (:|) <$> x <*> many x
 {-# INLINE some1 #-}
 
 -- | 'scanl' is similar to 'foldl', but returns a stream of successive
