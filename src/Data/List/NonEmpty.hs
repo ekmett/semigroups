@@ -47,6 +47,7 @@ module Data.List.NonEmpty (
    , cycle       -- :: NonEmpty a -> NonEmpty a
    , unfold      -- :: (a -> (b, Maybe a) -> a -> NonEmpty b
    , insert      -- :: (Foldable f, Ord a) => a -> f a -> NonEmpty a
+   , some1       -- :: Alternative f => f a -> f (NonEmpty a)
    -- * Extracting sublists
    , take        -- :: Int -> NonEmpty a -> [a]
    , drop        -- :: Int -> NonEmpty a -> [a]
@@ -298,6 +299,11 @@ tails = fromList . List.tails . Foldable.toList
 insert  :: (Foldable f, Ord a) => a -> f a -> NonEmpty a
 insert a = fromList . List.insert a . Foldable.toList
 {-# INLINE insert #-}
+
+-- | @'some1' x@ sequences @x@ one or more times.
+some1 :: Alternative f => f a -> f (NonEmpty a)
+some1 x = (:|) <$> x <*> many x
+{-# INLINE some1 #-}
 
 -- | 'scanl' is similar to 'foldl', but returns a stream of successive
 -- reduced values from the left:
