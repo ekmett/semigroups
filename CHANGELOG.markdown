@@ -1,3 +1,8 @@
+0.12
+----
+* Added an instance for `Const r`.
+* Added `some1`
+
 0.11
 ----
 * Added the missing instance for `HashSet`.
