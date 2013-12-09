@@ -1,3 +1,7 @@
+0.12.0.1
+--------
+* Updated to support the new version of `text`
+
 0.12
 ----
 * Added an instance for `Const r`.

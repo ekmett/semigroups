@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.12
+version:       0.12.0.1
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -42,7 +42,7 @@ library
       containers           >= 0.3  && < 0.6,
       hashable             >= 1.1  && < 1.3,
       nats                 >= 0.1  && < 1,
-      text                 >= 0.10 && < 0.12,
+      text                 >= 0.10 && < 1.1,
       unordered-containers >= 0.2  && < 0.3
 
   hs-source-dirs: src
