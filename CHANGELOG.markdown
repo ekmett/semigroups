@@ -1,6 +1,7 @@
-0.12.0.1
+0.12.1
 --------
 * Updated to support the new version of `text`
+* Added `transpose`, `sortBy` and `sortWith`.
 
 0.12
 ----
