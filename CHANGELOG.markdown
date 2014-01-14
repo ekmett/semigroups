@@ -1,6 +1,10 @@
+0.12.2
+------
+* Vastly widened the dependency bound on `text` and `bytestring`.
+
 0.12.1
---------
-* Updated to support the new version of `text`
+-------
+* Updated to support the new version of `text`.
 * Added `transpose`, `sortBy` and `sortWith`.
 
 0.12

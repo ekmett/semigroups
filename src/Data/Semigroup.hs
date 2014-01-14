@@ -76,8 +76,8 @@ import Data.IntMap (IntMap)
 #ifndef BASE2
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
-import Data.Text as Strict
-import Data.Text.Lazy as Lazy
+import qualified Data.Text as Strict
+import qualified Data.Text.Lazy as Lazy
 import Data.Hashable
 import Data.HashMap.Lazy as Lazy
 import Data.HashSet
