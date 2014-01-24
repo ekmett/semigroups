@@ -159,9 +159,10 @@ instance Semigroup a => Semigroup (Maybe a) where
   a       <> Nothing = a
   Just a  <> Just b  = Just (a <> b)
 
-instance Semigroup (Either a b) where
-  Left _ <> b = b
-  a      <> _ = a
+instance Semigroup b => Semigroup (Either a b) where
+  Left _  <> b       = b
+  a       <> Left _  = a
+  Right a <> Right b = Right (a <> b)
 
 instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
   (a,b) <> (a',b') = (a<>a',b<>b')
