@@ -13,7 +13,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup
--- Copyright   :  (C) 2011-2013 Edward Kmett,
+-- Copyright   :  (C) 2011-2014 Edward Kmett
 -- License     :  BSD-style (see the file LICENSE)
 --
 -- Maintainer  :  Edward Kmett <ekmett@gmail.com>
@@ -440,8 +440,10 @@ timesN n x | n == 0    = mempty
 {-# INLINE timesN #-}
 
 
--- | Option is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
--- instead of an underlying 'Monoid'. Ideally, this type would not exist at all and we would just fix the 'Monoid' intance of 'Maybe'
+-- | 'Option' is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
+-- instead of an underlying 'Monoid'.
+--
+-- Ideally, this type would not exist at all and we would just fix the 'Monoid' instance of 'Maybe'
 newtype Option a = Option
   { getOption :: Maybe a } deriving
   ( Eq, Ord, Show, Read
