@@ -119,7 +119,7 @@ class Semigroup a where
   -- The default definition uses peasant multiplication, exploiting associativity to only
   -- require /O(log n)/ uses of @\<\>@.
   --
-  -- See also 'times'.
+  -- See also 'timesN'.
 
   times1p :: Whole n => n -> a -> a
   times1p y0 x0 = f x0 (1 Prelude.+ y0)
@@ -347,7 +347,7 @@ instance Monoid m => Monoid (WrappedMonoid m) where
 
 -- | Repeat a value @n@ times.
 --
--- > times n a = a <> a <> ... <> a  -- using <> (n-1) times
+-- > timesN n a = a <> a <> ... <> a  -- using <> (n-1) times
 --
 -- Implemented using 'times1p'.
 timesN :: (Whole n, Monoid a) => n -> a -> a
