@@ -33,7 +33,7 @@ library
     cpp-options: -DLANGUAGE_DeriveDataTypeable
 
   if impl(ghc >= 7.4)
-    cpp-optons: -DLANGUAGE_DeriveGeneric
+    cpp-options: -DLANGUAGE_DeriveGeneric
 
   if flag(base2)
     build-depends: base == 2.*
