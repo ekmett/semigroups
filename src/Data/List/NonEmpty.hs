@@ -172,22 +172,6 @@ instance Functor NonEmpty where
   b <$ ~(_ :| as)   = b   :| (b <$ as)
 #endif
 
-{-
-instance Extend NonEmpty where
-  extend f w@ ~(_ :| aas) = f w :| case aas of
-      []     -> []
-      (a:as) -> toList (extend f (a :| as))
-
-instance Comonad NonEmpty where
-  extract ~(a :| _) = a
-
-instance Apply NonEmpty where
-  (<.>) = ap
-
-instance Alt NonEmpty where
-  (a :| as) <!> ~(b :| bs) = a :| (as ++ b : bs)
--}
-
 instance Applicative NonEmpty where
   pure a = a :| []
   (<*>) = ap
@@ -201,27 +185,12 @@ instance Monad NonEmpty where
 instance Traversable NonEmpty where
   traverse f ~(a :| as) = (:|) <$> f a <*> traverse f as
 
-{-
-instance Traversable1 NonEmpty where
-  traverse1 f (a :| []) = (:|[]) <$> f a
-  traverse1 f (a :| (b: bs)) = (\a' (b':| bs') -> a' :| b': bs') <$> f a <.> traverse1 f (b :| bs)
--}
-
 instance Foldable NonEmpty where
   foldr f z ~(a :| as) = f a (foldr f z as)
   foldl f z ~(a :| as) = foldl f (f z a) as
   foldl1 f ~(a :| as) = foldl f a as
   foldMap f ~(a :| as) = f a `mappend` foldMap f as
   fold ~(m :| ms) = m `mappend` fold ms
-
-{-
-instance Foldable1 NonEmpty where
-  foldMap1 f (a :| []) = f a
-  foldMap1 f (a :| b : bs) = f a <> foldMap1 f (b :| bs)
-
-instance Semigroup (NonEmpty a) where
-  (<>) = (<!>)
--}
 
 -- | Extract the first element of the stream.
 head :: NonEmpty a -> a
@@ -547,7 +516,7 @@ nub = nubBy (==)
 nubBy :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty a
 nubBy eq (a :| as) = a :| List.nubBy eq (List.filter (\b -> not (eq a b)) as)
 
--- | 'transpose' for NonEmtpy, behaves the same as 'Data.List.transpose'
+-- | 'transpose' for 'NonEmpty', behaves the same as 'Data.List.transpose'
 -- The rows/columns need not be the same length, in which case
 -- > transpose . transpose /= id
 transpose :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
@@ -555,11 +524,11 @@ transpose = fmap fromList
           . fromList . List.transpose . Foldable.toList
           . fmap Foldable.toList
 
--- | 'sortBy' for NonEmtpy, behaves the same as 'Data.List.sortBy'
+-- | 'sortBy' for 'NonEmpty', behaves the same as 'Data.List.sortBy'
 sortBy :: (a -> a -> Ordering) -> NonEmpty a -> NonEmpty a
 sortBy f = lift (List.sortBy f)
 
--- | 'sortOn' for NonEmtpy, behaves the same as:
+-- | 'sortOn' for 'NonEmpty', behaves the same as:
 --
 -- > sortBy . comparing
 sortOn :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
