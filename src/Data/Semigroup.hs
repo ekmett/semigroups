@@ -2,6 +2,10 @@
 #ifdef LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
+#ifdef LANGUAGE_DeriveGeneric
+{-# LANGUAGE DeriveGeneric #-}
+#endif
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Trustworthy #-}
@@ -85,6 +89,9 @@ import Data.HashSet
 
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+import GHC.Generics
 #endif
 
 infixr 6 <>
@@ -224,7 +231,7 @@ instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
 
 newtype Min a = Min { getMin :: a } deriving
-  ( Eq, Ord, Bounded, Show, Read
+  ( Eq, Ord, Enum, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -241,6 +248,12 @@ instance (Ord a, Bounded a) => Monoid (Min a) where
 instance Functor Min where
   fmap f (Min x) = Min (f x)
 
+instance Foldable Min where
+  foldMap f (Min a) = f a
+
+instance Traversable Min where
+  traverse f (Min a) = Min <$> f a
+
 instance Applicative Min where
   pure = Min
   a <* _ = a
@@ -256,9 +269,12 @@ instance MonadFix Min where
   mfix f = fix (f . getMin)
 
 newtype Max a = Max { getMax :: a } deriving
-  ( Eq, Ord, Bounded, Show, Read
+  ( Eq, Ord, Enum, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
 #endif
   )
 
@@ -272,6 +288,12 @@ instance (Ord a, Bounded a) => Monoid (Max a) where
 
 instance Functor Max where
   fmap f (Max x) = Max (f x)
+
+instance Foldable Max where
+  foldMap f (Max a) = f a
+
+instance Traversable Max where
+  traverse f (Max a) = Max <$> f a
 
 instance Applicative Max where
   pure = Max
@@ -289,10 +311,13 @@ instance MonadFix Max where
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
-  ( Eq, Ord, Bounded, Show, Read
+  ( Eq, Ord, Enum, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data
   , Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
 #endif
   )
 
@@ -302,6 +327,12 @@ instance Semigroup (First a) where
 
 instance Functor First where
   fmap f (First x) = First (f x)
+
+instance Foldable First where
+  foldMap f (First a) = f a
+
+instance Traversable First where
+  traverse f (First a) = First <$> f a
 
 instance Applicative First where
   pure x = First x
@@ -319,9 +350,12 @@ instance MonadFix First where
 
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
-  ( Eq, Ord, Bounded, Show, Read
+  ( Eq, Ord, Enum, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
 #endif
   )
 
@@ -332,6 +366,12 @@ instance Semigroup (Last a) where
 instance Functor Last where
   fmap f (Last x) = Last (f x)
   a <$ _ = Last a
+
+instance Foldable Last where
+  foldMap f (Last a) = f a
+
+instance Traversable Last where
+  traverse f (Last a) = Last <$> f a
 
 instance Applicative Last where
   pure = Last
@@ -373,9 +413,12 @@ instance (Hashable a, Eq a) => Semigroup (HashSet a) where
 -- | Provide a Semigroup for an arbitrary Monoid.
 newtype WrappedMonoid m = WrapMonoid
   { unwrapMonoid :: m } deriving
-  ( Eq, Ord, Bounded, Show, Read
+  ( Eq, Ord, Enum, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
 #endif
   )
 
@@ -404,6 +447,9 @@ newtype Option a = Option
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
 #endif
   )
 
