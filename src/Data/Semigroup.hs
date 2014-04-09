@@ -242,8 +242,18 @@ instance Functor Min where
   fmap f (Min x) = Min (f x)
 
 instance Applicative Min where
-  pure x = Min x
+  pure = Min
+  a <* _ = a
+  _ *> a = a
   Min f <*> Min x = Min (f x)
+
+instance Monad Min where
+  return = Min
+  _ >> a = a
+  Min a >>= f = f a
+
+instance MonadFix Min where
+  mfix f = fix (f . getMin)
 
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
@@ -264,8 +274,18 @@ instance Functor Max where
   fmap f (Max x) = Max (f x)
 
 instance Applicative Max where
-  pure x = Max x
+  pure = Max
+  a <* _ = a
+  _ *> a = a
   Max f <*> Max x = Max (f x)
+
+instance Monad Max where
+  return = Max
+  _ >> a = a
+  Max a >>= f = f a
+
+instance MonadFix Max where
+  mfix f = fix (f . getMax)
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
@@ -285,7 +305,17 @@ instance Functor First where
 
 instance Applicative First where
   pure x = First x
+  a <* _ = a
+  _ *> a = a
   First f <*> First x = First (f x)
+
+instance Monad First where
+  return = First
+  _ >> a = a
+  First a >>= f = f a
+
+instance MonadFix First where
+  mfix f = fix (f . getFirst)
 
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
@@ -301,10 +331,21 @@ instance Semigroup (Last a) where
 
 instance Functor Last where
   fmap f (Last x) = Last (f x)
+  a <$ _ = Last a
 
 instance Applicative Last where
-  pure x = Last x
+  pure = Last
+  a <* _ = a
+  _ *> a = a
   Last f <*> Last x = Last (f x)
+
+instance Monad Last where
+  return = Last
+  _ >> a = a
+  Last a >>= f = f a
+
+instance MonadFix Last where
+  mfix f = fix (f . getLast)
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
