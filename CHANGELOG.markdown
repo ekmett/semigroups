@@ -1,6 +1,6 @@
 0.13
 ----
-* Added instances for 'Generic', 'Foldable', 'Traversable', 'Enum', 'Functor', 'Applicative', 'Monad' and 'MonadFix'
+* Added instances for 'Generic', 'Foldable', 'Traversable', 'Enum', 'Functor', 'Hashable', 'Applicative', 'Monad' and 'MonadFix'
 
 0.12.2
 ------

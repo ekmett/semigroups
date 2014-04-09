@@ -238,6 +238,7 @@ instance Semigroup (NonEmpty a) where
 
 newtype Min a = Min { getMin :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -276,6 +277,7 @@ instance MonadFix Min where
 
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -318,6 +320,7 @@ instance MonadFix Max where
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data
   , Typeable
@@ -357,6 +360,7 @@ instance MonadFix First where
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -420,6 +424,7 @@ instance (Hashable a, Eq a) => Semigroup (HashSet a) where
 newtype WrappedMonoid m = WrapMonoid
   { unwrapMonoid :: m } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -453,6 +458,7 @@ timesN n x | n == 0    = mempty
 newtype Option a = Option
   { getOption :: Maybe a } deriving
   ( Eq, Ord, Show, Read
+  , Hashable
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
