@@ -238,6 +238,13 @@ instance (Ord a, Bounded a) => Monoid (Min a) where
   mempty = maxBound
   mappend = (<>)
 
+instance Functor Min where
+  fmap f (Min x) = Min (f x)
+
+instance Applicative Min where
+  pure x = Min x
+  Min f <*> Min x = Min (f x)
+
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -253,6 +260,13 @@ instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
   mappend = (<>)
 
+instance Functor Max where
+  fmap f (Max x) = Max (f x)
+
+instance Applicative Max where
+  pure x = Max x
+  Max f <*> Max x = Max (f x)
+
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
@@ -266,6 +280,13 @@ instance Semigroup (First a) where
   a <> _ = a
   times1p _ a = a
 
+instance Functor First where
+  fmap f (First x) = First (f x)
+
+instance Applicative First where
+  pure x = First x
+  First f <*> First x = First (f x)
+
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Bounded, Show, Read
@@ -277,6 +298,13 @@ newtype Last a = Last { getLast :: a } deriving
 instance Semigroup (Last a) where
   _ <> b = b
   times1p _ a = a
+
+instance Functor Last where
+  fmap f (Last x) = Last (f x)
+
+instance Applicative Last where
+  pure x = Last x
+  Last f <*> Last x = Last (f x)
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
