@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.13
+version:       0.13.0.1
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -31,6 +31,9 @@ library
   if !impl(hugs)
     other-extensions: DeriveDataTypeable
     cpp-options: -DLANGUAGE_DeriveDataTypeable
+
+  if impl(ghc >= 7.4 && < 7.5)
+    build-depends: ghc-prim
 
   if impl(ghc >= 7.4)
     cpp-options: -DLANGUAGE_DeriveGeneric

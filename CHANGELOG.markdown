@@ -1,3 +1,7 @@
+0.13.0.1
+--------
+* `Generic` support requires `ghc-prim` on GHC 7.4.
+
 0.13
 ----
 * Added instances for 'Generic', 'Foldable', 'Traversable', 'Enum', 'Functor', 'Hashable', 'Applicative', 'Monad' and 'MonadFix'
