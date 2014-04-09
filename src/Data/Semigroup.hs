@@ -99,11 +99,15 @@ infixr 6 <>
 class Semigroup a where
   -- | An associative operation.
   --
-  -- > (a <> b) <> c = a <> (b <> c)
+  -- @
+  -- (a '<>' b) '<>' c = a '<>' (b '<>' c)
+  -- @
   --
   -- If @a@ is also a 'Monoid' we further require
   --
-  -- > (<>) = mappend
+  -- @
+  -- ('<>') = 'mappend'
+  -- @
   (<>) :: a -> a -> a
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
   default (<>) :: Monoid a => a -> a -> a
@@ -121,7 +125,9 @@ class Semigroup a where
 
   -- | Repeat a value (n + 1) times.
   --
-  -- > times1p n a = a <> a <> ... <> a  -- using <> n times
+  -- @
+  -- 'times1p' n a = a '<>' a '<>' ... '<>' a  -- using '<>' n times
+  -- @
   --
   -- The default definition uses peasant multiplication, exploiting associativity to only
   -- require /O(log n)/ uses of @\<\>@.
@@ -502,7 +508,7 @@ instance Semigroup a => Monoid (Option a) where
   mempty = Option Nothing
   Option a `mappend` Option b = Option (a <> b)
 
--- | This lets you use a difference list of a Semigroup as a Monoid.
+-- | This lets you use a difference list of a 'Semigroup' as a 'Monoid'.
 diff :: Semigroup m => m -> Endo m
 diff = Endo . (<>)
 
