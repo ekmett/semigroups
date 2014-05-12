@@ -263,6 +263,9 @@ newtype Min a = Min { getMin :: a } deriving
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
+#endif
   )
 
 instance Ord a => Semigroup (Min a) where
