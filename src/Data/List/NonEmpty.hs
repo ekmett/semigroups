@@ -1,5 +1,13 @@
 {-# LANGUAGE CPP #-}
 
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#ifdef MIN_VERSION_hashable
+{-# LANGUAGE Trustworthy #-}
+#else
+{-# LANGUAGE Safe #-}
+#endif
+#endif
+
 #ifdef __GLASGOW_HASKELL__
 #define LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}

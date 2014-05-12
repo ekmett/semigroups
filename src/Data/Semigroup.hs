@@ -1,5 +1,4 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 #ifdef __GLASGOW_HASKELL__
 #define LANGUAGE_DeriveDataTypeable
@@ -9,7 +8,11 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DefaultSignatures
 {-# LANGUAGE DefaultSignatures #-}
+#ifdef MIN_VERSION_hashable
 {-# LANGUAGE Trustworthy #-}
+#else
+{-# LANGUAGE Safe #-}
+#endif
 #endif
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 704
@@ -256,10 +259,7 @@ instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
 
 newtype Min a = Min { getMin :: a } deriving
-  ( Eq, Ord, Enum, Bounded, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
+  ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -267,6 +267,29 @@ newtype Min a = Min { getMin :: a } deriving
   , Generic
 #endif
   )
+
+instance Bounded a => Bounded (Min a) where
+  minBound = Min minBound
+  maxBound = Min maxBound
+
+instance Enum a => Enum (Min a) where
+  succ (Min a) = Min (succ a)
+  pred (Min a) = Min (succ a)
+  toEnum = Min . toEnum
+  fromEnum = fromEnum . getMin
+  enumFrom (Min a) = Min <$> enumFrom a
+  enumFromThen (Min a) (Min b) = Min <$> enumFromThen a b
+  enumFromTo (Min a) (Min b) = Min <$> enumFromTo a b
+  enumFromThenTo (Min a) (Min b) (Min c) = Min <$> enumFromThenTo a b c
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (Min a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (Min a) = hashWithSalt p a
+#else
+  hash (Min a) = hash a
+#endif
+#endif
 
 instance Ord a => Semigroup (Min a) where
   Min a <> Min b = Min (a `min` b)
@@ -300,10 +323,7 @@ instance MonadFix Min where
   mfix f = fix (f . getMin)
 
 newtype Max a = Max { getMax :: a } deriving
-  ( Eq, Ord, Enum, Bounded, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
+  ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -311,6 +331,29 @@ newtype Max a = Max { getMax :: a } deriving
   , Generic
 #endif
   )
+
+instance Bounded a => Bounded (Max a) where
+  minBound = Max minBound
+  maxBound = Max maxBound
+
+instance Enum a => Enum (Max a) where
+  succ (Max a) = Max (succ a)
+  pred (Max a) = Max (succ a)
+  toEnum = Max . toEnum
+  fromEnum = fromEnum . getMax
+  enumFrom (Max a) = Max <$> enumFrom a
+  enumFromThen (Max a) (Max b) = Max <$> enumFromThen a b
+  enumFromTo (Max a) (Max b) = Max <$> enumFromTo a b
+  enumFromThenTo (Max a) (Max b) (Max c) = Max <$> enumFromThenTo a b c
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (Max a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (Max a) = hashWithSalt p a
+#else
+  hash (Max a) = hash a
+#endif
+#endif
 
 instance Ord a => Semigroup (Max a) where
   Max a <> Max b = Max (a `max` b)
@@ -345,10 +388,7 @@ instance MonadFix Max where
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
-  ( Eq, Ord, Enum, Bounded, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
+  ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data
   , Typeable
@@ -357,6 +397,29 @@ newtype First a = First { getFirst :: a } deriving
   , Generic
 #endif
   )
+
+instance Bounded a => Bounded (First a) where
+  minBound = First minBound
+  maxBound = First maxBound
+
+instance Enum a => Enum (First a) where
+  succ (First a) = First (succ a)
+  pred (First a) = First (succ a)
+  toEnum = First . toEnum
+  fromEnum = fromEnum . getFirst
+  enumFrom (First a) = First <$> enumFrom a
+  enumFromThen (First a) (First b) = First <$> enumFromThen a b
+  enumFromTo (First a) (First b) = First <$> enumFromTo a b
+  enumFromThenTo (First a) (First b) (First c) = First <$> enumFromThenTo a b c
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (First a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (First a) = hashWithSalt p a
+#else
+  hash (First a) = hash a
+#endif
+#endif
 
 instance Semigroup (First a) where
   a <> _ = a
@@ -387,10 +450,7 @@ instance MonadFix First where
 
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
-  ( Eq, Ord, Enum, Bounded, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
+  ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -398,6 +458,29 @@ newtype Last a = Last { getLast :: a } deriving
   , Generic
 #endif
   )
+
+instance Bounded a => Bounded (Last a) where
+  minBound = Last minBound
+  maxBound = Last maxBound
+
+instance Enum a => Enum (Last a) where
+  succ (Last a) = Last (succ a)
+  pred (Last a) = Last (succ a)
+  toEnum = Last . toEnum
+  fromEnum = fromEnum . getLast
+  enumFrom (Last a) = Last <$> enumFrom a
+  enumFromThen (Last a) (Last b) = Last <$> enumFromThen a b
+  enumFromTo (Last a) (Last b) = Last <$> enumFromTo a b
+  enumFromThenTo (Last a) (Last b) (Last c) = Last <$> enumFromThenTo a b c
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (Last a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (Last a) = hashWithSalt p a
+#else
+  hash (Last a) = hash a
+#endif
+#endif
 
 instance Semigroup (Last a) where
   _ <> b = b
@@ -457,10 +540,7 @@ instance (Hashable a, Eq a) => Semigroup (HashSet a) where
 -- | Provide a Semigroup for an arbitrary Monoid.
 newtype WrappedMonoid m = WrapMonoid
   { unwrapMonoid :: m } deriving
-  ( Eq, Ord, Enum, Bounded, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
+  ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -469,12 +549,35 @@ newtype WrappedMonoid m = WrapMonoid
 #endif
   )
 
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (WrappedMonoid a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (WrapMonoid a) = hashWithSalt p a
+#else
+  hash (WrapMonoid a) = hash a
+#endif
+#endif
+
 instance Monoid m => Semigroup (WrappedMonoid m) where
   WrapMonoid a <> WrapMonoid b = WrapMonoid (a `mappend` b)
 
 instance Monoid m => Monoid (WrappedMonoid m) where
   mempty = WrapMonoid mempty
   WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
+
+instance Bounded a => Bounded (WrappedMonoid a) where
+  minBound = WrapMonoid minBound
+  maxBound = WrapMonoid maxBound
+
+instance Enum a => Enum (WrappedMonoid a) where
+  succ (WrapMonoid a) = WrapMonoid (succ a)
+  pred (WrapMonoid a) = WrapMonoid (succ a)
+  toEnum = WrapMonoid . toEnum
+  fromEnum = fromEnum . unwrapMonoid
+  enumFrom (WrapMonoid a) = WrapMonoid <$> enumFrom a
+  enumFromThen (WrapMonoid a) (WrapMonoid b) = WrapMonoid <$> enumFromThen a b
+  enumFromTo (WrapMonoid a) (WrapMonoid b) = WrapMonoid <$> enumFromTo a b
+  enumFromThenTo (WrapMonoid a) (WrapMonoid b) (WrapMonoid c) = WrapMonoid <$> enumFromThenTo a b c
 
 -- | Repeat a value @n@ times.
 --
@@ -494,9 +597,6 @@ timesN n x | n == 0    = mempty
 newtype Option a = Option
   { getOption :: Maybe a } deriving
   ( Eq, Ord, Show, Read
-#ifdef MIN_VERSION_hashable
-  , Hashable
-#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -504,6 +604,15 @@ newtype Option a = Option
   , Generic
 #endif
   )
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (Option a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (Option a) = hashWithSalt p a
+#else
+  hash (Option a) = hash a
+#endif
+#endif
 
 instance Functor Option where
   fmap f (Option a) = Option (fmap f a)
