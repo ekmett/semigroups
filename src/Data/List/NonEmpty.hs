@@ -143,7 +143,12 @@ data NonEmpty a = a :| [a] deriving
   )
 
 #ifdef MIN_VERSION_hashable
-instance Hashable a => Hashable (NonEmpty a)
+instance Hashable a => Hashable (NonEmpty a) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (a :| as) = p `hashWithSalt` a `hashWithSalt` as
+#else
+  hash (a :| as) = hash a `combine` hash as
+#endif
 #endif
 
 length :: NonEmpty a -> Int
