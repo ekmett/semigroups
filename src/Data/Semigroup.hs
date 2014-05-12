@@ -1,15 +1,22 @@
 {-# LANGUAGE CPP #-}
-#ifdef LANGUAGE_DeriveDataTypeable
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
+#ifdef __GLASGOW_HASKELL__
+#define LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
-#ifdef LANGUAGE_DeriveGeneric
-{-# LANGUAGE DeriveGeneric #-}
-#endif
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#define LANGUAGE_DefaultSignatures
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Trustworthy #-}
 #endif
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 704
+#define LANGUAGE_DeriveGeneric
+{-# LANGUAGE DeriveGeneric #-}
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup
@@ -69,20 +76,31 @@ import qualified Data.Monoid as Monoid
 import Data.Foldable
 import Data.Traversable
 import Data.List.NonEmpty
-
 import Numeric.Natural.Internal
+
+#ifdef MIN_VERSION_containers
 import Data.Sequence (Seq, (><))
 import Data.Set (Set)
 import Data.IntSet (IntSet)
 import Data.Map (Map)
 import Data.IntMap (IntMap)
+#endif
 
-#ifndef BASE2
+#ifdef MIN_VERSION_bytestring
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
+#endif
+
+#ifdef MIN_VERSION_text
 import qualified Data.Text as Strict
 import qualified Data.Text.Lazy as Lazy
+#endif
+
+#ifdef MIN_VERSION_hashable
 import Data.Hashable
+#endif
+
+#ifdef MIN_VERSION_unordered_containers
 import Data.HashMap.Lazy as Lazy
 import Data.HashSet
 #endif
@@ -90,6 +108,7 @@ import Data.HashSet
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
 #endif
+
 #ifdef LANGUAGE_DeriveGeneric
 import GHC.Generics
 #endif
@@ -109,7 +128,7 @@ class Semigroup a where
   -- ('<>') = 'mappend'
   -- @
   (<>) :: a -> a -> a
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#ifdef LANGUAGE_DefaultSignatures
   default (<>) :: Monoid a => a -> a -> a
   (<>) = mappend
 #endif
@@ -238,7 +257,9 @@ instance Semigroup (NonEmpty a) where
 
 newtype Min a = Min { getMin :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -277,7 +298,9 @@ instance MonadFix Min where
 
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -320,7 +343,9 @@ instance MonadFix Max where
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data
   , Typeable
@@ -360,7 +385,9 @@ instance MonadFix First where
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -399,19 +426,23 @@ instance MonadFix Last where
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
-#ifndef BASE2
+#ifdef MIN_VERSION_bytestring
 instance Semigroup Strict.ByteString where
   (<>) = mappend
 
 instance Semigroup Lazy.ByteString where
   (<>) = mappend
+#endif
 
+#ifdef MIN_VERSION_text
 instance Semigroup Strict.Text where
   (<>) = mappend
 
 instance Semigroup Lazy.Text where
   (<>) = mappend
+#endif
 
+#ifdef MIN_VERSION_unordered_containers
 instance (Hashable k, Eq k) => Semigroup (Lazy.HashMap k a) where
   (<>) = mappend
 
@@ -424,7 +455,9 @@ instance (Hashable a, Eq a) => Semigroup (HashSet a) where
 newtype WrappedMonoid m = WrapMonoid
   { unwrapMonoid :: m } deriving
   ( Eq, Ord, Enum, Bounded, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -458,7 +491,9 @@ timesN n x | n == 0    = mempty
 newtype Option a = Option
   { getOption :: Maybe a } deriving
   ( Eq, Ord, Show, Read
+#ifdef MIN_VERSION_hashable
   , Hashable
+#endif
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
@@ -518,6 +553,7 @@ instance Semigroup a => Monoid (Option a) where
 diff :: Semigroup m => m -> Endo m
 diff = Endo . (<>)
 
+#ifdef MIN_VERSION_containers
 instance Semigroup (Seq a) where
   (<>) = (><)
 
@@ -536,3 +572,4 @@ instance Semigroup (IntMap v) where
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
   times1p _ a = a
+#endif

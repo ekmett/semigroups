@@ -1,6 +1,13 @@
 {-# LANGUAGE CPP #-}
-#ifdef LANGUAGE_DeriveDataTypeable
+
+#ifdef __GLASGOW_HASKELL__
+#define LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}
+#endif
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 704
+#define LANGUAGE_DeriveGeneric
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -100,23 +107,27 @@ import Prelude hiding
   , length
   )
 
-
 import Control.Applicative
--- import Control.Comonad
 import Control.Monad
--- import Data.Functor.Alt
+
+#ifdef LANGUAGE_DeriveDataTypeable
+import Data.Data
+#endif
+
 import Data.Foldable hiding (toList)
 import qualified Data.Foldable as Foldable
+
+#ifdef MIN_VERSION_hashable
+import Data.Hashable
+#endif
+
 import qualified Data.List as List
 import Data.Monoid (mappend)
 import Data.Ord (comparing)
 import Data.Traversable
--- import Data.Semigroup hiding (Last)
--- import Data.Semigroup.Foldable
--- import Data.Semigroup.Traversable
 
-#ifdef LANGUAGE_DeriveDataTypeable
-import Data.Data
+#ifdef LANGUAGE_DeriveGeneric
+import GHC.Generics
 #endif
 
 infixr 5 :|, <|
@@ -126,7 +137,14 @@ data NonEmpty a = a :| [a] deriving
 #ifdef LANGUAGE_DeriveDataTypeable
   , Data, Typeable
 #endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
+#endif
   )
+
+#ifdef MIN_VERSION_hashable
+instance Hashable a => Hashable (NonEmpty a)
+#endif
 
 length :: NonEmpty a -> Int
 length (_ :| xs) = 1 + Prelude.length xs
