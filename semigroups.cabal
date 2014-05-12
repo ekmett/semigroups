@@ -20,40 +20,62 @@ source-repository head
   type: git
   location: git://github.com/ekmett/semigroups.git
 
--- You can disable the use of the `hashable` package using `-f-hashable`.
--- This is an unsupported configuration, but may be useful for accelerating builds in sandboxes for expert users.
--- If set we will not supply instances of `Hashable`.
--- Note: `-f-hashable` implies `-f-unordered-containers`
 flag hashable
+  description:
+    You can disable the use of the `hashable` package using `-f-hashable`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+    .
+    If set we will not supply instances of `Hashable`
+    .
+    Note: `-f-hashable` implies `-f-unordered-containers`, as we are necessarily not able to supply those instances as well.
   default: True
   manual: True
 
--- You can disable the use of the `bytestring` package using `-f-bytestring`.
--- This is an unsupported configuration, but may be useful for accelerating builds in sandboxes for expert users.
 flag bytestring
+  description:
+    You can disable the use of the `bytestring` package using `-f-bytestring`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
--- You can disable the use of the `containers` package using `-f-containers`.
--- This is an unsupported configuration, but may be useful for accelerating builds in sandboxes for expert users.
 flag containers
+  description:
+    You can disable the use of the `containers` package using `-f-containers`.
+    .
+    Disabing this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
--- You can disable the use of the `text` package using `-f-text`.
--- This is an unsupported configuration, but may be useful for accelerating builds in sandboxes for expert users.
 flag text
+  description:
+    You can disable the use of the `text` package using `-f-text`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
--- You can disable the use of the `unordered-containers` package using `-f-unordered-containers`.
--- This is an unsupported configuration, but may be useful for accelerating builds in sandboxes for expert users.
 flag unordered-containers
+  description:
+    You can disable the use of the `unordered-containers` package using `-f-unordered-containers`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
 library
   default-language: Haskell98
+  hs-source-dirs: src
+  ghc-options: -Wall
+
+  exposed-modules:
+    Data.Semigroup
+    Data.List.NonEmpty
+
+  build-depends:
+    base >= 2   && < 5,
+    nats >= 0.1 && < 1
 
   if impl(ghc >= 7.4 && < 7.5)
     build-depends: ghc-prim
@@ -72,14 +94,3 @@ library
 
   if flag(hashable) && flag(unordered-containers)
     build-depends: unordered-containers >= 0.2  && < 0.3
-
-  build-depends:
-    base >= 2   && < 5,
-    nats >= 0.1 && < 1
-
-  hs-source-dirs: src
-  ghc-options: -Wall
-
-  exposed-modules:
-    Data.Semigroup
-    Data.List.NonEmpty
