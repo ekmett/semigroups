@@ -26,7 +26,7 @@ flag hashable
     .
     Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
     .
-    If set we will not supply instances of `Hashable`
+    If disabled we will not supply instances of `Hashable`
     .
     Note: `-f-hashable` implies `-f-unordered-containers`, as we are necessarily not able to supply those instances as well.
   default: True
