@@ -1,3 +1,15 @@
+0.14
+----
+* Allow for manual removal of dependencies to support advanced sandbox users who explicitly want to avoid compiling certain dependencies
+  they know they aren't using.
+
+  We will fix bugs caused by any combination of these package flags, but the API of the package should be considered the default build
+  configuration with all of the package dependency flags enabled.
+
+* Will now build as full-fledged `Safe` Haskell if you configure with -f-hashable.
+
+* Added some missing `Generic`/`Generic`/`Hashable` instances
+
 0.13.0.1
 --------
 * `Generic` support requires `ghc-prim` on GHC 7.4.
