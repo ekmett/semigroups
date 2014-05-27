@@ -2,6 +2,9 @@
 #ifdef LANGUAGE_DeriveDataTypeable
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
+#if __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE TypeFamilies #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.List.NonEmpty
@@ -111,6 +114,9 @@ import qualified Data.List as List
 import Data.Monoid (mappend)
 import Data.Ord (comparing)
 import Data.Traversable
+#if __GLASGOW_HASKELL__ >= 708
+import qualified GHC.Exts as Exts
+#endif
 -- import Data.Semigroup hiding (Last)
 -- import Data.Semigroup.Foldable
 -- import Data.Semigroup.Traversable
@@ -127,6 +133,13 @@ data NonEmpty a = a :| [a] deriving
   , Data, Typeable
 #endif
   )
+
+#if __GLASGOW_HASKELL__ >= 708
+instance Exts.IsList (NonEmpty a) where
+  type Item (NonEmpty a) = a
+  fromList = fromList
+  toList = toList
+#endif
 
 length :: NonEmpty a -> Int
 length (_ :| xs) = 1 + Prelude.length xs
