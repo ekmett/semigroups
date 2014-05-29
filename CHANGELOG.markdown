@@ -1,3 +1,7 @@
+0.15
+----
+* `instance IsList NonEmpty`
+
 0.14
 ----
 * Allow for manual removal of dependencies to support advanced sandbox users who explicitly want to avoid compiling certain dependencies

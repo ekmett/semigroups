@@ -17,6 +17,10 @@
 #define LANGUAGE_DeriveGeneric
 {-# LANGUAGE DeriveGeneric #-}
 #endif
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE TypeFamilies #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.List.NonEmpty
@@ -134,6 +138,13 @@ import Data.Monoid (mappend)
 import Data.Ord (comparing)
 import Data.Traversable
 
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+import qualified GHC.Exts as Exts
+#endif
+-- import Data.Semigroup hiding (Last)
+-- import Data.Semigroup.Foldable
+-- import Data.Semigroup.Traversable
+
 #ifdef LANGUAGE_DeriveGeneric
 import GHC.Generics
 #endif
@@ -157,6 +168,12 @@ instance Hashable a => Hashable (NonEmpty a) where
 #else
   hash (a :| as) = hash a `combine` hash as
 #endif
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+instance Exts.IsList (NonEmpty a) where
+  type Item (NonEmpty a) = a
+  fromList = fromList
+  toList = toList
 #endif
 
 length :: NonEmpty a -> Int
