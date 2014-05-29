@@ -168,6 +168,7 @@ instance Hashable a => Hashable (NonEmpty a) where
 #else
   hash (a :| as) = hash a `combine` hash as
 #endif
+#endif
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
 instance Exts.IsList (NonEmpty a) where
