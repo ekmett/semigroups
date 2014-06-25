@@ -274,7 +274,7 @@ instance Bounded a => Bounded (Min a) where
 
 instance Enum a => Enum (Min a) where
   succ (Min a) = Min (succ a)
-  pred (Min a) = Min (succ a)
+  pred (Min a) = Min (pred a)
   toEnum = Min . toEnum
   fromEnum = fromEnum . getMin
   enumFrom (Min a) = Min <$> enumFrom a
@@ -338,7 +338,7 @@ instance Bounded a => Bounded (Max a) where
 
 instance Enum a => Enum (Max a) where
   succ (Max a) = Max (succ a)
-  pred (Max a) = Max (succ a)
+  pred (Max a) = Max (pred a)
   toEnum = Max . toEnum
   fromEnum = fromEnum . getMax
   enumFrom (Max a) = Max <$> enumFrom a
@@ -404,7 +404,7 @@ instance Bounded a => Bounded (First a) where
 
 instance Enum a => Enum (First a) where
   succ (First a) = First (succ a)
-  pred (First a) = First (succ a)
+  pred (First a) = First (pred a)
   toEnum = First . toEnum
   fromEnum = fromEnum . getFirst
   enumFrom (First a) = First <$> enumFrom a
@@ -465,7 +465,7 @@ instance Bounded a => Bounded (Last a) where
 
 instance Enum a => Enum (Last a) where
   succ (Last a) = Last (succ a)
-  pred (Last a) = Last (succ a)
+  pred (Last a) = Last (pred a)
   toEnum = Last . toEnum
   fromEnum = fromEnum . getLast
   enumFrom (Last a) = Last <$> enumFrom a
@@ -571,7 +571,7 @@ instance Bounded a => Bounded (WrappedMonoid a) where
 
 instance Enum a => Enum (WrappedMonoid a) where
   succ (WrapMonoid a) = WrapMonoid (succ a)
-  pred (WrapMonoid a) = WrapMonoid (succ a)
+  pred (WrapMonoid a) = WrapMonoid (pred a)
   toEnum = WrapMonoid . toEnum
   fromEnum = fromEnum . unwrapMonoid
   enumFrom (WrapMonoid a) = WrapMonoid <$> enumFrom a
