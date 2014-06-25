@@ -1,3 +1,7 @@
+0.15.1
+------
+* Nathan van Doorn fixed a number of embarassing bugs in the `Enum` instances.
+
 0.15
 ----
 * `instance IsList NonEmpty`
