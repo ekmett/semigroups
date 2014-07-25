@@ -8,7 +8,7 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DefaultSignatures
 {-# LANGUAGE DefaultSignatures #-}
-#ifdef MIN_VERSION_hashable
+#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
 #else
 {-# LANGUAGE Safe #-}

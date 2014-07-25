@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-#ifdef MIN_VERSION_hashable
+#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
 #else
 {-# LANGUAGE Safe #-}
