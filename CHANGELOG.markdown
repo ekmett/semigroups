@@ -1,3 +1,7 @@
+0.15.2
+------
+* Fixed a Trustworthiness problem for GHC 7.8+
+
 0.15.1
 ------
 * Nathan van Doorn fixed a number of embarassing bugs in the `Enum` instances.
