@@ -1,3 +1,7 @@
+0.15.3
+------
+* `instance NFData a => NFData (NonEmpty a)`
+
 0.15.2
 ------
 * Fixed a Trustworthiness problem for GHC 7.8+
