@@ -120,6 +120,11 @@ import Prelude hiding
   )
 
 import Control.Applicative
+
+#ifdef MIN_VERSION_deepseq
+import Control.DeepSeq (NFData(..))
+#endif
+
 import Control.Monad
 
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -175,6 +180,11 @@ instance Exts.IsList (NonEmpty a) where
   type Item (NonEmpty a) = a
   fromList = fromList
   toList = toList
+#endif
+
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (NonEmpty a) where
+  rnf (x :| xs) = rnf x `seq` rnf xs
 #endif
 
 length :: NonEmpty a -> Int
