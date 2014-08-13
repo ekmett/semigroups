@@ -81,6 +81,10 @@ import Data.Traversable
 import Data.List.NonEmpty
 import Numeric.Natural.Internal
 
+#ifdef MIN_VERSION_deepseq
+import Control.DeepSeq (NFData(..))
+#endif
+
 #ifdef MIN_VERSION_containers
 import Data.Sequence (Seq, (><))
 import Data.Set (Set)
@@ -322,6 +326,11 @@ instance Monad Min where
 instance MonadFix Min where
   mfix f = fix (f . getMin)
 
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (Min a) where
+  rnf (Min a) = rnf a
+#endif
+
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -386,6 +395,11 @@ instance Monad Max where
 instance MonadFix Max where
   mfix f = fix (f . getMax)
 
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (Max a) where
+  rnf (Max a) = rnf a
+#endif
+
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
   ( Eq, Ord, Show, Read
@@ -448,6 +462,11 @@ instance Monad First where
 instance MonadFix First where
   mfix f = fix (f . getFirst)
 
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (First a) where
+  rnf (First a) = rnf a
+#endif
+
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Show, Read
@@ -509,6 +528,11 @@ instance Monad Last where
 
 instance MonadFix Last where
   mfix f = fix (f . getLast)
+
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (Last a) where
+  rnf (Last a) = rnf a
+#endif
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
 
@@ -578,6 +602,11 @@ instance Enum a => Enum (WrappedMonoid a) where
   enumFromThen (WrapMonoid a) (WrapMonoid b) = WrapMonoid <$> enumFromThen a b
   enumFromTo (WrapMonoid a) (WrapMonoid b) = WrapMonoid <$> enumFromTo a b
   enumFromThenTo (WrapMonoid a) (WrapMonoid b) (WrapMonoid c) = WrapMonoid <$> enumFromThenTo a b c
+
+#ifdef MIN_VERSION_deepseq
+instance NFData m => NFData (WrappedMonoid m) where
+  rnf (WrapMonoid a) = rnf a
+#endif
 
 -- | Repeat a value @n@ times.
 --
@@ -649,6 +678,11 @@ instance Foldable Option where
 instance Traversable Option where
   traverse f (Option (Just a)) = Option . Just <$> f a
   traverse _ (Option Nothing)  = pure (Option Nothing)
+
+#ifdef MIN_VERSION_deepseq
+instance NFData a => NFData (Option a) where
+  rnf (Option a) = rnf a
+#endif
 
 -- | Fold an 'Option' case-wise, just like 'maybe'.
 option :: b -> (a -> b) -> Option a -> b

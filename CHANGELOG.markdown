@@ -1,6 +1,7 @@
 0.15.3
 ------
 * `instance NFData a => NFData (NonEmpty a)`
+* Added `NFData` instances for the types in Data.Semigroup
 
 0.15.2
 ------
