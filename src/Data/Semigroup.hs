@@ -71,7 +71,7 @@ module Data.Semigroup (
   ) where
 
 import Prelude hiding (foldr1)
-import Data.Monoid (Monoid(..),Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..),Endo(..))
+import Data.Monoid (Monoid(..),Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..))
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Fix
