@@ -131,7 +131,11 @@ import Control.Monad
 import Data.Data
 #endif
 
+#if MIN_VERSION_base(4,8,0)
+import Data.Foldable hiding (toList, length)
+#else
 import Data.Foldable hiding (toList)
+#endif
 import qualified Data.Foldable as Foldable
 
 #ifdef MIN_VERSION_hashable
