@@ -1,6 +1,7 @@
 0.15.4
 ------
 * Use `Data.Coerce.coerce` on GHC 7.8+ to reduce the number of eta-expansions in the resulting core.
+* Avoid conflict with pending `Foldable.length` in base.
 
 0.15.3
 ------
