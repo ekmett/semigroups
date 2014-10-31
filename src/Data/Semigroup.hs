@@ -20,6 +20,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 #endif
 
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+#define USE_COERCE
+{-# LANGUAGE ScopedTypeVariables #-}
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup
@@ -118,6 +124,10 @@ import Data.Data
 
 #ifdef LANGUAGE_DeriveGeneric
 import GHC.Generics
+#endif
+
+#ifdef USE_COERCE
+import Data.Coerce
 #endif
 
 infixr 6 <>
@@ -228,24 +238,48 @@ instance Semigroup a => Semigroup (Dual a) where
   times1p n (Dual a) = Dual (times1p n a)
 
 instance Semigroup (Endo a) where
+#ifdef USE_COERCE
+  (<>) = coerce ((.) :: (a -> a) -> (a -> a) -> (a -> a))
+#else
   Endo f <> Endo g = Endo (f . g)
+#endif
 
 instance Semigroup All where
+#ifdef USE_COERCE
+  (<>) = coerce (&&)
+#else
   All a <> All b = All (a && b)
+#endif
   times1p _ a = a
 
 instance Semigroup Any where
+#ifdef USE_COERCE
+  (<>) = coerce (||)
+#else
   Any a <> Any b = Any (a || b)
+#endif
   times1p _ a = a
 
 instance Num a => Semigroup (Sum a) where
+#ifdef USE_COERCE
+  (<>) = coerce ((+) :: a -> a -> a)
+#else
   Sum a <> Sum b = Sum (a + b)
+#endif
 
 instance Num a => Semigroup (Product a) where
+#ifdef USE_COERCE
+  (<>) = coerce ((*) :: a -> a -> a)
+#else
   Product a <> Product b = Product (a * b)
+#endif
 
 instance Semigroup a => Semigroup (Const a b) where
+#ifdef USE_COERCE
+  (<>) = coerce ((<>) :: a -> a -> a)
+#else
   Const a <> Const b = Const (a <> b)
+#endif
 
 #if MIN_VERSION_base(3,0,0)
 instance Semigroup (Monoid.First a) where
@@ -296,7 +330,11 @@ instance Hashable a => Hashable (Min a) where
 #endif
 
 instance Ord a => Semigroup (Min a) where
+#ifdef USE_COERCE
+  (<>) = coerce (min :: a -> a -> a)
+#else
   Min a <> Min b = Min (a `min` b)
+#endif
   times1p _ a = a
 
 instance (Ord a, Bounded a) => Monoid (Min a) where
@@ -365,7 +403,11 @@ instance Hashable a => Hashable (Max a) where
 #endif
 
 instance Ord a => Semigroup (Max a) where
+#ifdef USE_COERCE
+  (<>) = coerce (max :: a -> a -> a)
+#else
   Max a <> Max b = Max (a `max` b)
+#endif
   times1p _ a = a
 
 instance (Ord a, Bounded a) => Monoid (Max a) where
@@ -583,11 +625,15 @@ instance Hashable a => Hashable (WrappedMonoid a) where
 #endif
 
 instance Monoid m => Semigroup (WrappedMonoid m) where
+#ifdef USE_COERCE
+  (<>) = coerce (mappend :: m -> m -> m)
+#else
   WrapMonoid a <> WrapMonoid b = WrapMonoid (a `mappend` b)
+#endif
 
 instance Monoid m => Monoid (WrappedMonoid m) where
   mempty = WrapMonoid mempty
-  WrapMonoid a `mappend` WrapMonoid b = WrapMonoid (a `mappend` b)
+  mappend = (<>)
 
 instance Bounded a => Bounded (WrappedMonoid a) where
   minBound = WrapMonoid minBound
@@ -689,11 +735,15 @@ option :: b -> (a -> b) -> Option a -> b
 option n j (Option m) = maybe n j m
 
 instance Semigroup a => Semigroup (Option a) where
+#ifdef USE_COERCE
+  (<>) = coerce ((<>) :: Maybe a -> Maybe a -> Maybe a)
+#else
   Option a <> Option b = Option (a <> b)
+#endif
 
 instance Semigroup a => Monoid (Option a) where
   mempty = Option Nothing
-  Option a `mappend` Option b = Option (a <> b)
+  mappend = (<>)
 
 -- | This lets you use a difference list of a 'Semigroup' as a 'Monoid'.
 diff :: Semigroup m => m -> Endo m
