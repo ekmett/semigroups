@@ -85,7 +85,7 @@ import qualified Data.Monoid as Monoid
 import Data.Foldable
 import Data.Traversable
 import Data.List.NonEmpty
-import Numeric.Natural.Internal
+import Numeric.Natural
 
 #ifdef MIN_VERSION_deepseq
 import Control.DeepSeq (NFData(..))
@@ -170,17 +170,17 @@ class Semigroup a where
   --
   -- See also 'timesN'.
 
-  times1p :: Whole n => n -> a -> a
+  times1p :: Natural -> a -> a
   times1p y0 x0 = f x0 (1 Prelude.+ y0)
     where
       f x y
         | even y = f (x <> x) (y `quot` 2)
         | y == 1 = x
-        | otherwise = g (x <> x) (unsafePred y  `quot` 2) x
+        | otherwise = g (x <> x) (pred y  `quot` 2) x
       g x y z
         | even y = g (x <> x) (y `quot` 2) z
         | y == 1 = x <> z
-        | otherwise = g (x <> x) (unsafePred y `quot` 2) (x <> z)
+        | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
   {-# INLINE times1p #-}
 
 -- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
@@ -659,9 +659,9 @@ instance NFData m => NFData (WrappedMonoid m) where
 -- > timesN n a = a <> a <> ... <> a  -- using <> (n-1) times
 --
 -- Implemented using 'times1p'.
-timesN :: (Whole n, Monoid a) => n -> a -> a
+timesN :: Monoid a => Natural -> a -> a
 timesN n x | n == 0    = mempty
-           | otherwise = unwrapMonoid . times1p (unsafePred n) . WrapMonoid $ x
+           | otherwise = unwrapMonoid . times1p (pred n) . WrapMonoid $ x
 {-# INLINE timesN #-}
 
 

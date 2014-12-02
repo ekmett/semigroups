@@ -1,3 +1,7 @@
+0.16
+----
+* `times1p` and `timesN` are now reduced to accepting only a `Natural` argument. `Whole` doesn't exist in GHC 7.10's Numeric.Natural, and `nats` version 1 has removed support for the class.
+
 0.15.4
 ------
 * Use `Data.Coerce.coerce` on GHC 7.8+ to reduce the number of eta-expansions in the resulting core.
