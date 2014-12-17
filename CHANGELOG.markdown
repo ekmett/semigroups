@@ -1,3 +1,7 @@
+0.16.0.1
+--------
+* Bumped `deepseq` version bound for GHC 7.10 compatibility.
+
 0.16
 ----
 * `times1p` and `timesN` are now reduced to accepting only a `Natural` argument. `Whole` doesn't exist in GHC 7.10's Numeric.Natural, and `nats` version 1 has removed support for the class.
