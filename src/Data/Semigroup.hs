@@ -107,6 +107,7 @@ import Data.ByteString.Lazy as Lazy
 #ifdef MIN_VERSION_text
 import qualified Data.Text as Strict
 import qualified Data.Text.Lazy as Lazy
+import Data.Text.Lazy.Builder
 #endif
 
 #ifdef MIN_VERSION_hashable
@@ -591,6 +592,9 @@ instance Semigroup Strict.Text where
   (<>) = mappend
 
 instance Semigroup Lazy.Text where
+  (<>) = mappend
+
+instance Semigroup Builder where
   (<>) = mappend
 #endif
 
