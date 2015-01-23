@@ -126,6 +126,11 @@ import Control.DeepSeq (NFData(..))
 #endif
 
 import Control.Monad
+import Control.Monad.Fix
+
+#if MIN_VERSION_base(4,4,0)
+import Control.Monad.Zip (MonadZip(..))
+#endif
 
 #ifdef LANGUAGE_DeriveDataTypeable
 import Data.Data
@@ -189,6 +194,17 @@ instance Exts.IsList (NonEmpty a) where
 #ifdef MIN_VERSION_deepseq
 instance NFData a => NFData (NonEmpty a) where
   rnf (x :| xs) = rnf x `seq` rnf xs
+#endif
+
+instance MonadFix NonEmpty where
+  mfix f = case fix (f . head) of
+             ~(x :| _) -> x :| mfix (tail . f)
+
+#if MIN_VERSION_base(4,4,0)
+instance MonadZip NonEmpty where
+  mzip     = zip
+  mzipWith = zipWith
+  munzip   = unzip
 #endif
 
 length :: NonEmpty a -> Int
