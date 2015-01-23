@@ -1,3 +1,8 @@
+0.16.1
+------
+* Added `Semigroup` instances for various Builder constructions in `text` and `bytestring` where available.
+* Added `MonadFix` and `MonadPlus` instances for `NonEmpty`.
+
 0.16.0.1
 --------
 * Bumped `deepseq` version bound for GHC 7.10 compatibility.
