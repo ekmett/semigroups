@@ -1,3 +1,7 @@
+0.16.2
+------
+* Added `genericMappend` and supporting `GSemigroup` class for generically deriving Semigroup instances.
+
 0.16.1
 ------
 * Added `Semigroup` instances for various Builder constructions in `text` and `bytestring` where available.
