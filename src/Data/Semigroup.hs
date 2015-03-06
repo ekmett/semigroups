@@ -22,10 +22,13 @@
 {-# LANGUAGE FlexibleContexts #-}
 #endif
 
-
 #if __GLASGOW_HASKELL__ >= 708
 #define USE_COERCE
 {-# LANGUAGE ScopedTypeVariables #-}
+#endif
+
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
 #endif
 
 -----------------------------------------------------------------------------
@@ -83,6 +86,11 @@ module Data.Semigroup (
   ) where
 
 import Prelude hiding (foldr1)
+
+#if MIN_VERSION_base(4,8,0)
+import Data.Bifunctor
+#endif
+
 import Data.Monoid (Monoid(..),Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..))
 import Control.Applicative
 import Control.Monad
@@ -513,10 +521,10 @@ instance (Hashable a, Hashable b) => Hashable (Arg a b) where
 #endif
 #endif
 
--- instance Comonad (Arg a) where
---  extract (Arg _ a) = a
---  extend f w@(Arg a _) = Arg a (f w)
-
+#if MIN_VERSION_base(4,8,0)
+instance Bifunctor Arg where
+  bimap f g (Arg a b) = Arg (f a) (g b)
+#endif
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
