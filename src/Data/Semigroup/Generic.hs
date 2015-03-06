@@ -6,8 +6,7 @@ module Data.Semigroup.Generic
   , genericMappend
   ) where
 
-import Control.Applicative
-import Data.Semigroup 
+import Data.Semigroup
 import GHC.Generics
 
 -- | Generically generate a 'Semigroup' ('<>') operation for any type
@@ -34,6 +33,3 @@ instance GSemigroup f => GSemigroup (M1 i c f) where
 
 instance (GSemigroup f, GSemigroup g) => GSemigroup (f :*: g) where
   gmappend (x1 :*: x2) (y1 :*: y2) = gmappend x1 y1 :*: gmappend x2 y2
-
-instance (Applicative f, GSemigroup g) => GSemigroup (f :.: g) where
-  gmappend (Comp1 m) (Comp1 n) = Comp1 (liftA2 gmappend m n)
