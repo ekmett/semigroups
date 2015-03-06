@@ -400,6 +400,7 @@ newtype Max a = Max { getMax :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
@@ -531,6 +532,7 @@ newtype First a = First { getFirst :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
@@ -597,6 +599,7 @@ newtype Last a = Last { getLast :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
@@ -705,6 +708,7 @@ newtype WrappedMonoid m = WrapMonoid
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
@@ -770,6 +774,7 @@ newtype Option a = Option
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
