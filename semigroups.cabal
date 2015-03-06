@@ -81,6 +81,10 @@ library
     Data.Semigroup
     Data.List.NonEmpty
 
+  if impl(ghc >= 7.4)
+    exposed-modules:
+      Data.Semigroup.Generic
+
   build-depends:
     base >= 2   && < 5,
     nats >= 0.1 && < 2
