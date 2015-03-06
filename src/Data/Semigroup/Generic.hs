@@ -1,6 +1,20 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE Safe #-}
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Data.Semigroup.Generic
+-- Copyright   :  (C) 2014-2015 Edward Kmett, Eric Mertens
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  provisional
+-- Portability :  portable
+--
+-- This module provides generic deriving tools for monoids and semigroups for
+-- product-like structures.
+--
+----------------------------------------------------------------------------
 module Data.Semigroup.Generic
   ( GSemigroup
   , genericMappend
