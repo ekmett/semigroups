@@ -84,7 +84,6 @@ library
   if impl(ghc >= 7.4)
     exposed-modules:
       Data.Semigroup.Generic
-      Data.Monoid.Generic
 
   build-depends:
     base >= 2   && < 5,
