@@ -1,6 +1,7 @@
 0.16.2
 ------
 * Added `genericMappend` and supporting `GSemigroup` class for generically deriving Semigroup instances.
+* Added `Arg a b` which only compares for equality/order on its first argument, which can be used to compute `argmin` and `argmax`.
 
 0.16.1
 ------
