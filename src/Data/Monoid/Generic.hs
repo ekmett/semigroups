@@ -10,7 +10,6 @@ module Data.Monoid.Generic
 import Data.Semigroup
 import Data.Semigroup.Generic
 import GHC.Generics
-import Control.Applicative
 
 -- | Generically generate a 'Monoid' 'mempty' for any product-like type
 -- implementing 'Generic'.
