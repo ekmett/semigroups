@@ -38,6 +38,3 @@ instance GMonoid f => GMonoid (M1 i c f) where
 
 instance (GMonoid f, GMonoid g) => GMonoid (f :*: g) where
   gmempty = gmempty :*: gmempty
-
-instance (Applicative f, GMonoid g) => GMonoid (f :.: g) where
-  gmempty = Comp1 (pure gmempty)
