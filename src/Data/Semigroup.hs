@@ -74,6 +74,10 @@ module Data.Semigroup (
   -- * Difference lists of a semigroup
   , diff
   , cycle1
+  -- * ArgMin, ArgMax
+  , Arg(..)
+  , ArgMin
+  , ArgMax
   ) where
 
 import Prelude hiding (foldr1)
@@ -307,6 +311,7 @@ instance Semigroup (Monoid.Last a) where
 instance Semigroup (NonEmpty a) where
   (a :| as) <> ~(b :| bs) = a :| (as ++ b : bs)
 
+
 newtype Min a = Min { getMin :: a } deriving
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -314,6 +319,7 @@ newtype Min a = Min { getMin :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
@@ -452,6 +458,62 @@ instance MonadFix Max where
 instance NFData a => NFData (Max a) where
   rnf (Max a) = rnf a
 #endif
+
+-- | 'Arg' isn't itself a 'Semigroup' in its own right, but it can be placed inside 'Min' and 'Max'
+-- to compute an arg min or arg max.
+data Arg a b = Arg a b deriving
+  ( Show, Read
+#ifdef LANGUAGE_DeriveDataTypeable
+  , Data, Typeable
+#endif
+#ifdef LANGUAGE_DeriveGeneric
+  , Generic
+  , Generic1
+#endif
+  )
+
+type ArgMin a b = Min (Arg a b)
+type ArgMax a b = Max (Arg a b)
+
+instance Functor (Arg a) where
+  fmap f (Arg x a) = Arg x (f a)
+
+instance Foldable (Arg a) where
+  foldMap f (Arg _ a) = f a
+
+instance Traversable (Arg a) where
+  traverse f (Arg x a) = Arg x <$> f a
+
+instance Eq a => Eq (Arg a b) where
+  Arg a _ == Arg b _ = a == b
+
+instance Ord a => Ord (Arg a b) where
+  Arg a _ `compare` Arg b _ = compare a b
+  min x@(Arg a _) y@(Arg b _)
+    | a <= b    = x
+    | otherwise = y
+  max x@(Arg a _) y@(Arg b _)
+    | a >= b    = x
+    | otherwise = y
+
+#ifdef MIN_VERSION_deepseq
+instance (NFData a, NFData b) => NFData (Arg a b) where
+  rnf (Arg a b) = rnf a `seq` rnf b `seq` ()
+#endif
+
+#ifdef MIN_VERSION_hashable
+instance (Hashable a, Hashable b) => Hashable (Arg a b) where
+#if MIN_VERSION_hashable(1,2,0)
+  hashWithSalt p (Arg a b) = hashWithSalt p a `hashWithSalt` b
+#else
+  hash (Arg a b) = hashWithSalt (hash a) b
+#endif
+#endif
+
+-- instance Comonad (Arg a) where
+--  extract (Arg _ a) = a
+--  extend f w@(Arg a _) = Arg a (f w)
+
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
 newtype First a = First { getFirst :: a } deriving
