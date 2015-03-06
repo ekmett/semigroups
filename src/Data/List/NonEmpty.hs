@@ -172,6 +172,7 @@ data NonEmpty a = a :| [a] deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+  , Generic1
 #endif
   )
 
