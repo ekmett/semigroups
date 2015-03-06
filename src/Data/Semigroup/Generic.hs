@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE Safe #-}
@@ -10,8 +9,6 @@ module Data.Semigroup.Generic
 import Control.Applicative
 import Data.Semigroup 
 import GHC.Generics
-
-infixr 6 `genericMappend`
 
 -- | Generically generate a 'Semigroup' ('<>') operation for any type
 -- implementing 'Generic'. This operation will append two values
