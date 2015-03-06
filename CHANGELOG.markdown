@@ -1,13 +1,9 @@
-0.16.3
-------
-* Remove unusable `Generic` support for `(:.:)`
-* Add `Bifunctor` `Arg` instance to avoid orphans for GHC 7.10+.
-* Added missing `Data.Monoid.Generic` module to source control.
-
 0.16.2
 ------
 * Added `genericMappend` and supporting `GSemigroup` class for generically deriving Semigroup instances.
 * Added `Arg a b` which only compares for equality/order on its first argument, which can be used to compute `argmin` and `argmax`.
+* Add `Bifunctor` `Arg` instance to avoid orphans for GHC 7.10+.
+* Added missing `Data.Monoid.Generic` module to source control.
 
 0.16.1
 ------
