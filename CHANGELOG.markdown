@@ -1,3 +1,7 @@
+0.16.2.2
+--------
+* Cleaned up imports to remove warnings on GHC 7.10.
+
 0.16.2.1
 --------
 * Restored the ability to build on GHC < 7.6. (`Generic1` deriving was only added in GHC 7.6)
