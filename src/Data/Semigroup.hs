@@ -89,15 +89,18 @@ import Prelude hiding (foldr1)
 
 #if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor
+#else
+import Data.Monoid (Monoid(..))
+import Data.Foldable
+import Data.Traversable
 #endif
 
-import Data.Monoid (Monoid(..),Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..))
+import Data.Monoid (Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..))
+
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
-import Data.Foldable
-import Data.Traversable
 import Data.List.NonEmpty
 import Numeric.Natural
 

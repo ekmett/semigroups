@@ -21,6 +21,10 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE TypeFamilies #-}
 #endif
+
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.List.NonEmpty
@@ -140,6 +144,8 @@ import Data.Data
 import Data.Foldable hiding (toList, length)
 #else
 import Data.Foldable hiding (toList)
+import Data.Monoid (mappend)
+import Data.Traversable
 #endif
 import qualified Data.Foldable as Foldable
 
@@ -148,9 +154,7 @@ import Data.Hashable
 #endif
 
 import qualified Data.List as List
-import Data.Monoid (mappend)
 import Data.Ord (comparing)
-import Data.Traversable
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
 import qualified GHC.Exts as Exts
