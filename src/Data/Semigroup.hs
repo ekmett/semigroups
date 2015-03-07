@@ -329,7 +329,9 @@ newtype Min a = Min { getMin :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -403,7 +405,9 @@ newtype Max a = Max { getMax :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -479,7 +483,9 @@ data Arg a b = Arg a b deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -535,7 +541,9 @@ newtype First a = First { getFirst :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -602,7 +610,9 @@ newtype Last a = Last { getLast :: a } deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -711,7 +721,9 @@ newtype WrappedMonoid m = WrapMonoid
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
@@ -777,7 +789,9 @@ newtype Option a = Option
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 

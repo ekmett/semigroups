@@ -172,7 +172,9 @@ data NonEmpty a = a :| [a] deriving
 #endif
 #ifdef LANGUAGE_DeriveGeneric
   , Generic
+#if __GLASGOW_HASKELL__ >= 706
   , Generic1
+#endif
 #endif
   )
 
