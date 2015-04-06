@@ -89,6 +89,7 @@ import Prelude hiding (foldr1)
 
 #if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor
+import Data.Void
 #else
 import Data.Monoid (Monoid(..))
 import Data.Foldable
@@ -318,6 +319,12 @@ instance Semigroup (Monoid.First a) where
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
+  times1p _ a = a
+#endif
+
+#if MIN_VERSION_base(4,8,0)
+instance Semigroup Void where
+  a <> _ = a
   times1p _ a = a
 #endif
 
