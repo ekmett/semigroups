@@ -912,12 +912,14 @@ instance Ord k => Semigroup (Map k v) where
   times1p _ a = a
 #endif
 
-#ifdef MIN_VERSION_tagged
+#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
 instance Semigroup (Proxy s) where
   _ <> _ = Proxy
   sconcat _ = Proxy
   times1p _ _ = Proxy
+#endif
 
+#ifdef MIN_VERSION_tagged
 instance Semigroup a => Semigroup (Tagged s a) where
 # ifdef USE_COERCE
   (<>) = coerce ((<>) :: a -> a -> a)
