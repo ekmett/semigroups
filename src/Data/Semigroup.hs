@@ -135,8 +135,11 @@ import Data.ByteString.Short
 # endif
 #endif
 
-#ifdef MIN_VERSION_tagged
+#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
 import Data.Proxy
+#endif
+
+#ifdef MIN_VERSION_tagged
 import Data.Tagged
 #endif
 
