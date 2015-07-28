@@ -428,6 +428,15 @@ instance NFData a => NFData (Min a) where
   rnf (Min a) = rnf a
 #endif
 
+instance Num a => Num (Min a) where
+  (Min a) + (Min b) = Min (a + b)
+  (Min a) * (Min b) = Min (a * b)
+  (Min a) - (Min b) = Min (a - b)
+  negate (Min a) = Min (negate a)
+  abs    (Min a) = Min (abs a)
+  signum (Min a) = Min (signum a)
+  fromInteger    = Min . fromInteger
+
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -503,6 +512,16 @@ instance MonadFix Max where
 instance NFData a => NFData (Max a) where
   rnf (Max a) = rnf a
 #endif
+
+instance Num a => Num (Max a) where
+  (Max a) + (Max b) = Max (a + b)
+  (Max a) * (Max b) = Max (a * b)
+  (Max a) - (Max b) = Max (a - b)
+  negate (Max a) = Max (negate a)
+  abs    (Max a) = Max (abs a)
+  signum (Max a) = Max (signum a)
+  fromInteger    = Max . fromInteger
+
 
 -- | 'Arg' isn't itself a 'Semigroup' in its own right, but it can be placed inside 'Min' and 'Max'
 -- to compute an arg min or arg max.
