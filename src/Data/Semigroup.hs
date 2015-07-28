@@ -97,6 +97,9 @@ import Data.Traversable
 #endif
 
 import Data.Monoid (Dual(..),Endo(..),All(..),Any(..),Sum(..),Product(..))
+#if MIN_VERSION_base(4,8,0)
+import Data.Monoid (Alt(..))
+#endif
 
 import Control.Applicative
 import Control.Monad
@@ -130,6 +133,14 @@ import qualified Data.ByteString.Lazy.Builder as ByteString
 # if MIN_VERSION_bytestring(0,10,4)
 import Data.ByteString.Short
 # endif
+#endif
+
+#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
+import Data.Proxy
+#endif
+
+#ifdef MIN_VERSION_tagged
+import Data.Tagged
 #endif
 
 #ifdef MIN_VERSION_text
@@ -320,6 +331,15 @@ instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
   times1p _ a = a
+#endif
+
+#if MIN_VERSION_base(4,8,0)
+instance Alternative f => Semigroup (Alt f a) where
+# ifdef USE_COERCE
+  (<>) = coerce ((<|>) :: f a -> f a -> f a)
+# else
+  Alt a <> Alt b = Alt (a <|> b)
+# endif
 #endif
 
 #if MIN_VERSION_base(4,8,0)
@@ -893,4 +913,20 @@ instance Semigroup (IntMap v) where
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
   times1p _ a = a
+#endif
+
+#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
+instance Semigroup (Proxy s) where
+  _ <> _ = Proxy
+  sconcat _ = Proxy
+  times1p _ _ = Proxy
+#endif
+
+#ifdef MIN_VERSION_tagged
+instance Semigroup a => Semigroup (Tagged s a) where
+# ifdef USE_COERCE
+  (<>) = coerce ((<>) :: a -> a -> a)
+# else
+  Tagged a <> Tagged b = Tagged (a <> b)
+# endif
 #endif
