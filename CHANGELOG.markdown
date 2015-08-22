@@ -1,3 +1,8 @@
+0.16.2.3
+--------
+* Add `Semigroup` instances for `Alt`, `Void`, `Proxy` and `Tagged`
+* Add `Num` instances for `Min` and `Max`
+
 0.16.2.2
 --------
 * Cleaned up imports to remove warnings on GHC 7.10.
