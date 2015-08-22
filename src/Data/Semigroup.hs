@@ -22,6 +22,10 @@
 {-# LANGUAGE FlexibleContexts #-}
 #endif
 
+#if __GLASGOW_HASKELL__ >= 706
+{-# LANGUAGE PolyKinds #-}
+#endif
+
 #if __GLASGOW_HASKELL__ >= 708
 #define USE_COERCE
 {-# LANGUAGE ScopedTypeVariables #-}
