@@ -1,3 +1,8 @@
+0.17
+----
+* Added `groupWith`, `groupAllWith`, `groupWith1`, `groupAllWith1`
+* Renamed `sortOn` to `sortWith` to match the "Comprehensive comprehensions" paper and `TransformListComp` extension.
+
 0.16.2.3
 --------
 * Add `Semigroup` instances for `Alt`, `Void`, `Proxy` and `Tagged`
