@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.16.2.2
+version:       0.16.2.3
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -56,6 +56,14 @@ flag deepseq
   default: True
   manual: True
 
+flag tagged
+  description:
+    You can disable the use of the `tagged` package using `-f-tagged`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+  default: True
+  manual: True
+
 flag text
   description:
     You can disable the use of the `text` package using `-f-text`.
@@ -100,6 +108,9 @@ library
 
   if flag(deepseq)
     build-depends: deepseq >= 1.1 && < 1.5
+
+  if flag(tagged)
+    build-depends: tagged >= 0.4.4 && < 1
 
   if flag(text)
     build-depends: text >= 0.10 && < 2
