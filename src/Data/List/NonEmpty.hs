@@ -52,7 +52,7 @@ module Data.List.NonEmpty (
    , scanr1      -- :: (a -> a -> a) -> NonEmpty a -> NonEmpty a
    , transpose   -- :: NonEmpty (NonEmpty a) -> NonEmpty (NonEmpty a)
    , sortBy      -- :: (a -> a -> Ordering) -> NonEmpty a -> NonEmpty a
-   , sortOn      -- :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
+   , sortWith      -- :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
    -- * Basic functions
    , length      -- :: NonEmpty a -> Int
    , head        -- :: NonEmpty a -> a
@@ -85,12 +85,12 @@ module Data.List.NonEmpty (
    , partition   -- :: (a -> Bool) -> NonEmpty a -> ([a],[a])
    , group       -- :: Foldable f => Eq a => f a -> [NonEmpty a]
    , groupBy     -- :: Foldable f => (a -> a -> Bool) -> f a -> [NonEmpty a]
-   , groupOn     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
-   , groupAllOn  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> [NonEmpty a]
+   , groupWith     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
+   , groupAllWith  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> [NonEmpty a]
    , group1      -- :: Eq a => NonEmpty a -> NonEmpty (NonEmpty a)
    , groupBy1    -- :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty (NonEmpty a)
-   , groupOn1     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
-   , groupAllOn1  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
+   , groupWith1     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
+   , groupAllWith1  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
    -- * Sublist predicates
    , isPrefixOf  -- :: Foldable f => f a -> NonEmpty a -> Bool
    -- * \"Set\" operations
@@ -515,17 +515,17 @@ groupBy eq0 = go eq0 . Foldable.toList
     go eq (x : xs) = (x :| ys) : groupBy eq zs
       where (ys, zs) = List.span (eq x) xs
 
--- | 'groupOn' operates like 'group', but uses the provided projection when
+-- | 'groupWith' operates like 'group', but uses the provided projection when
 -- comparing for equality
-groupOn :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
-groupOn f = groupBy ((==) `on` f)
-{-# INLINE groupOn #-}
+groupWith :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
+groupWith f = groupBy ((==) `on` f)
+{-# INLINE groupWith #-}
 
--- | 'groupAllOn' operates like 'groupOn', but sorts the list first so that each
+-- | 'groupAllWith' operates like 'groupWith', but sorts the list first so that each
 -- equivalence class has, at most, one list in the output
-groupAllOn :: (Ord b) => (a -> b) -> [a] -> [NonEmpty a]
-groupAllOn f = groupOn f . List.sortBy (compare `on` f)
-{-# INLINE groupAllOn #-}
+groupAllWith :: (Ord b) => (a -> b) -> [a] -> [NonEmpty a]
+groupAllWith f = groupWith f . List.sortBy (compare `on` f)
+{-# INLINE groupAllWith #-}
 
 -- | 'group1' operates like 'group', but uses the knowledge that its
 -- input is non-empty to produce guaranteed non-empty output.
@@ -539,15 +539,15 @@ groupBy1 eq (x :| xs) = (x :| ys) :| groupBy eq zs
   where (ys, zs) = List.span (eq x) xs
 {-# INLINE groupBy1 #-}
 
--- | 'groupOn1' is to 'group1' as 'groupOn' is to 'group'
-groupOn1 :: (Eq b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
-groupOn1 f = groupBy1 ((==) `on` f)
-{-# INLINE groupOn1 #-}
+-- | 'groupWith1' is to 'group1' as 'groupWith' is to 'group'
+groupWith1 :: (Eq b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
+groupWith1 f = groupBy1 ((==) `on` f)
+{-# INLINE groupWith1 #-}
 
--- | 'groupAllOn1' is to 'groupOn1' as 'groupAllOn' is to 'groupOn'
-groupAllOn1 :: (Ord b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
-groupAllOn1 f = groupOn1 f . sortOn f
-{-# INLINE groupAllOn1 #-}
+-- | 'groupAllWith1' is to 'groupWith1' as 'groupAllWith' is to 'groupWith'
+groupAllWith1 :: (Ord b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
+groupAllWith1 f = groupWith1 f . sortWith f
+{-# INLINE groupAllWith1 #-}
 
 -- | The 'isPrefix' function returns @True@ if the first argument is
 -- a prefix of the second.
@@ -641,8 +641,8 @@ transpose = fmap fromList
 sortBy :: (a -> a -> Ordering) -> NonEmpty a -> NonEmpty a
 sortBy f = lift (List.sortBy f)
 
--- | 'sortOn' for 'NonEmpty', behaves the same as:
+-- | 'sortWith' for 'NonEmpty', behaves the same as:
 --
 -- > sortBy . comparing
-sortOn :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
-sortOn = sortBy . comparing
+sortWith :: Ord o => (a -> o) -> NonEmpty a -> NonEmpty a
+sortWith = sortBy . comparing
