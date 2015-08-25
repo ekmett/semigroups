@@ -85,8 +85,12 @@ module Data.List.NonEmpty (
    , partition   -- :: (a -> Bool) -> NonEmpty a -> ([a],[a])
    , group       -- :: Foldable f => Eq a => f a -> [NonEmpty a]
    , groupBy     -- :: Foldable f => (a -> a -> Bool) -> f a -> [NonEmpty a]
+   , groupOn     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
+   , groupAllOn  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> [NonEmpty a]
    , group1      -- :: Eq a => NonEmpty a -> NonEmpty (NonEmpty a)
    , groupBy1    -- :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty (NonEmpty a)
+   , groupOn1     -- :: (Foldable f, Eq b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
+   , groupAllOn1  -- :: (Foldable f, Ord b) => (a -> b) -> f a -> NonEmpty (NonEmpty a)
    -- * Sublist predicates
    , isPrefixOf  -- :: Foldable f => f a -> NonEmpty a -> Bool
    -- * \"Set\" operations
@@ -148,6 +152,7 @@ import Data.Monoid (mappend)
 import Data.Traversable
 #endif
 import qualified Data.Foldable as Foldable
+import Data.Function (on)
 
 #ifdef MIN_VERSION_hashable
 import Data.Hashable
@@ -510,6 +515,18 @@ groupBy eq0 = go eq0 . Foldable.toList
     go eq (x : xs) = (x :| ys) : groupBy eq zs
       where (ys, zs) = List.span (eq x) xs
 
+-- | 'groupOn' operates like 'group', but uses the provided projection when
+-- comparing for equality
+groupOn :: (Foldable f, Eq b) => (a -> b) -> f a -> [NonEmpty a]
+groupOn f = groupBy ((==) `on` f)
+{-# INLINE groupOn #-}
+
+-- | 'groupAllOn' operates like 'groupOn', but sorts the list first so that each
+-- equivalence class has, at most, one list in the output
+groupAllOn :: (Ord b) => (a -> b) -> [a] -> [NonEmpty a]
+groupAllOn f = groupOn f . List.sortBy (compare `on` f)
+{-# INLINE groupAllOn #-}
+
 -- | 'group1' operates like 'group', but uses the knowledge that its
 -- input is non-empty to produce guaranteed non-empty output.
 group1 :: Eq a => NonEmpty a -> NonEmpty (NonEmpty a)
@@ -521,6 +538,16 @@ groupBy1 :: (a -> a -> Bool) -> NonEmpty a -> NonEmpty (NonEmpty a)
 groupBy1 eq (x :| xs) = (x :| ys) :| groupBy eq zs
   where (ys, zs) = List.span (eq x) xs
 {-# INLINE groupBy1 #-}
+
+-- | 'groupOn1' is to 'group1' as 'groupOn' is to 'group'
+groupOn1 :: (Eq b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
+groupOn1 f = groupBy1 ((==) `on` f)
+{-# INLINE groupOn1 #-}
+
+-- | 'groupAllOn1' is to 'groupOn1' as 'groupAllOn' is to 'groupOn'
+groupAllOn1 :: (Ord b) => (a -> b) -> NonEmpty a -> NonEmpty (NonEmpty a)
+groupAllOn1 f = groupOn1 f . sortOn f
+{-# INLINE groupAllOn1 #-}
 
 -- | The 'isPrefix' function returns @True@ if the first argument is
 -- a prefix of the second.
