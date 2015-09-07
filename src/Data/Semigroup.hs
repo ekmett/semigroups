@@ -62,6 +62,7 @@
 ----------------------------------------------------------------------------
 module Data.Semigroup (
     Semigroup(..)
+  , stimes1p
   -- * Semigroups
   , Min(..)
   , Max(..)
@@ -203,6 +204,30 @@ class Semigroup a where
     go b (c:cs) = b <> go c cs
     go b []     = b
 
+  -- | Repeat a value @n@ times.
+  --
+  -- Given that this works on a 'Semigroup' it is allowed to fail if you request 0 or fewer
+  -- repetitions, and the default definition will do so.
+  --
+  -- By making this a member of the class idempotent monoids can upgrade this to execute in
+  -- /O(1)/.
+  --
+  -- @since 0.18
+  stimes :: Integral b => b -> a -> a
+  stimes y0 x0
+    | y0 <= 0   = error "stimes: positive multiplier expected"
+    | otherwise = f x0 y0
+    where
+      f x y
+        | even y = f (x <> x) (y `quot` 2)
+        | y == 1 = x
+        | otherwise = g (x <> x) (pred y  `quot` 2) x
+      g x y z
+        | even y = g (x <> x) (y `quot` 2) z
+        | y == 1 = x <> z
+        | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
+  {-# INLINE stimes #-}
+
   -- | Repeat a value (n + 1) times.
   --
   -- @
@@ -213,19 +238,29 @@ class Semigroup a where
   -- require /O(log n)/ uses of @\<\>@.
   --
   -- See also 'timesN'.
+  --
+  -- /Deprecated since 0.18/
 
   times1p :: Natural -> a -> a
-  times1p y0 x0 = f x0 (1 Prelude.+ y0)
-    where
-      f x y
-        | even y = f (x <> x) (y `quot` 2)
-        | y == 1 = x
-        | otherwise = g (x <> x) (pred y  `quot` 2) x
-      g x y z
-        | even y = g (x <> x) (y `quot` 2) z
-        | y == 1 = x <> z
-        | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
+  times1p y0 x0 = stimes (1 Prelude.+ y0) x0
   {-# INLINE times1p #-}
+
+{-# DEPRECATED times1p "Use 'stimes1p' or the related 'stimes' combinator instead." #-}
+
+-- | Repeat a value @(n + 1)@ times.
+--
+-- @
+-- 'stimes1p' n a = a '<>' a '<>' ... '<>' a  -- using '<>' n times
+-- @
+--
+-- The default definition uses peasant multiplication, exploiting associativity to only
+-- require /O(log n)/ uses of @\<\>@.
+--
+-- See also 'timesN'.
+--
+-- @since 0.18
+stimes1p :: (Integral b, Semigroup a) => b -> a -> a
+stimes1p y0 x0 = stimes (1 Prelude.+ y0) x0
 
 -- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
 -- May fail to terminate for some values in some semigroups.

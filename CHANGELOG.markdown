@@ -1,3 +1,7 @@
+0.18
+----
+* Deprecated `times1p` in favor of `stimes` and `stimes1p`.
+
 0.17
 ----
 * Added `groupWith`, `groupAllWith`, `groupWith1`, `groupAllWith1`
