@@ -1,6 +1,6 @@
 0.18
 ----
-* Deprecated `times1p` in favor of `stimes` and `stimes1p`.
+* Removed `times1p` in favor of `stimes`.
 
 0.17
 ----

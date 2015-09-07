@@ -62,14 +62,16 @@
 ----------------------------------------------------------------------------
 module Data.Semigroup (
     Semigroup(..)
-  , stimes1p
+  , stimesMonoid
+  , stimesIdempotent
+  , stimesIdempotentMonoid
+  , mtimesDefault
   -- * Semigroups
   , Min(..)
   , Max(..)
   , First(..)
   , Last(..)
   , WrappedMonoid(..)
-  , mtimesDefault
   -- * Re-exported monoids from Data.Monoid
   , Monoid(..)
   , Dual(..)
@@ -88,8 +90,6 @@ module Data.Semigroup (
   , Arg(..)
   , ArgMin
   , ArgMax
-  -- * Deprecations
-  , timesN
   ) where
 
 import Prelude hiding (foldr1)
@@ -113,7 +113,6 @@ import Control.Monad
 import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
 import Data.List.NonEmpty
-import Numeric.Natural
 
 #ifdef MIN_VERSION_deepseq
 import Control.DeepSeq (NFData(..))
@@ -211,8 +210,8 @@ class Semigroup a where
   -- Given that this works on a 'Semigroup' it is allowed to fail if you request 0 or fewer
   -- repetitions, and the default definition will do so.
   --
-  -- By making this a member of the class idempotent monoids can upgrade this to execute in
-  -- /O(1)/.
+  -- By making this a member of the class, idempotent semigroups and monoids can upgrade this to execute in
+  -- /O(1)/ by picking @stimes = stimesIdempotent@ or @stimes = stimesIdempotentMonoid@ respectively.
   --
   -- @since 0.18
   stimes :: Integral b => b -> a -> a
@@ -230,40 +229,6 @@ class Semigroup a where
         | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
   {-# INLINE stimes #-}
 
-  -- | Repeat a value (n + 1) times.
-  --
-  -- @
-  -- 'times1p' n a = a '<>' a '<>' ... '<>' a  -- using '<>' n times
-  -- @
-  --
-  -- The default definition uses peasant multiplication, exploiting associativity to only
-  -- require /O(log n)/ uses of @\<\>@.
-  --
-  -- See also 'stimes1p'.
-  --
-  -- /Deprecated since 0.18/
-
-  times1p :: Natural -> a -> a
-  times1p y0 x0 = stimes (1 Prelude.+ y0) x0
-  {-# INLINE times1p #-}
-
-{-# DEPRECATED times1p "Use 'stimes1p' or the related 'stimes' combinator instead." #-}
-
--- | Repeat a value @(n + 1)@ times.
---
--- @
--- 'stimes1p' n a = a '<>' a '<>' ... '<>' a  -- using '<>' n times
--- @
---
--- The default definition uses peasant multiplication, exploiting associativity to only
--- require /O(log n)/ uses of @\<\>@.
---
--- See also 'stimes'.
---
--- @since 0.18
-stimes1p :: (Integral b, Semigroup a) => b -> a -> a
-stimes1p y0 x0 = stimes (1 Prelude.+ y0) x0
-
 -- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
 -- May fail to terminate for some values in some semigroups.
 cycle1 :: Semigroup m => m -> m
@@ -272,51 +237,61 @@ cycle1 xs = xs' where xs' = xs <> xs'
 instance Semigroup () where
   _ <> _ = ()
   sconcat _ = ()
-  times1p _ _ = ()
+  stimes _ _ = ()
 
 instance Semigroup b => Semigroup (a -> b) where
   f <> g = \a -> f a <> g a
-  times1p n f e = times1p n (f e)
+  stimes n f e = stimes n (f e)
 
 instance Semigroup [a] where
   (<>) = (++)
-  times1p n x = rep n where
-    rep 0 = x
-    rep i = x ++ rep (i - 1)
+  stimes n x
+    | n < 0 = error "stimes: [], negative multiplier"
+    | otherwise = rep n
+    where
+      rep 0 = []
+      rep i = x ++ rep (i - 1)
 
 instance Semigroup a => Semigroup (Maybe a) where
   Nothing <> b       = b
   a       <> Nothing = a
   Just a  <> Just b  = Just (a <> b)
+  stimes _ Nothing  = Nothing
+  stimes n (Just a) = case compare n 0 of
+    LT -> error "stimes: Maybe, negative multiplier"
+    EQ -> Nothing
+    GT -> Just (stimes n a)
 
 instance Semigroup (Either a b) where
   Left _ <> b = b
   a      <> _ = a
+  stimes = stimesIdempotent
 
 instance (Semigroup a, Semigroup b) => Semigroup (a, b) where
   (a,b) <> (a',b') = (a<>a',b<>b')
-  times1p n (a,b) = (times1p n a, times1p n b)
+  stimes n (a,b) = (stimes n a, stimes n b)
 
 instance (Semigroup a, Semigroup b, Semigroup c) => Semigroup (a, b, c) where
   (a,b,c) <> (a',b',c') = (a<>a',b<>b',c<>c')
-  times1p n (a,b,c) = (times1p n a, times1p n b, times1p n c)
+  stimes n (a,b,c) = (stimes n a, stimes n b, stimes n c)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d) => Semigroup (a, b, c, d) where
   (a,b,c,d) <> (a',b',c',d') = (a<>a',b<>b',c<>c',d<>d')
-  times1p n (a,b,c,d) = (times1p n a, times1p n b, times1p n c, times1p n d)
+  stimes n (a,b,c,d) = (stimes n a, stimes n b, stimes n c, stimes n d)
 
 instance (Semigroup a, Semigroup b, Semigroup c, Semigroup d, Semigroup e) => Semigroup (a, b, c, d, e) where
   (a,b,c,d,e) <> (a',b',c',d',e') = (a<>a',b<>b',c<>c',d<>d',e<>e')
-  times1p n (a,b,c,d,e) = (times1p n a, times1p n b, times1p n c, times1p n d, times1p n e)
+  stimes n (a,b,c,d,e) = (stimes n a, stimes n b, stimes n c, stimes n d, stimes n e)
 
 instance Semigroup Ordering where
   LT <> _ = LT
   EQ <> y = y
   GT <> _ = GT
+  stimes = stimesIdempotentMonoid
 
 instance Semigroup a => Semigroup (Dual a) where
   Dual a <> Dual b = Dual (b <> a)
-  times1p n (Dual a) = Dual (times1p n a)
+  stimes n (Dual a) = Dual (stimes n a)
 
 instance Semigroup (Endo a) where
 #ifdef USE_COERCE
@@ -324,6 +299,7 @@ instance Semigroup (Endo a) where
 #else
   Endo f <> Endo g = Endo (f . g)
 #endif
+  stimes = stimesMonoid
 
 instance Semigroup All where
 #ifdef USE_COERCE
@@ -331,7 +307,8 @@ instance Semigroup All where
 #else
   All a <> All b = All (a && b)
 #endif
-  times1p _ a = a
+
+  stimes = stimesIdempotentMonoid
 
 instance Semigroup Any where
 #ifdef USE_COERCE
@@ -339,7 +316,9 @@ instance Semigroup Any where
 #else
   Any a <> Any b = Any (a || b)
 #endif
-  times1p _ a = a
+
+  stimes = stimesIdempotentMonoid
+
 
 instance Num a => Semigroup (Sum a) where
 #ifdef USE_COERCE
@@ -347,6 +326,7 @@ instance Num a => Semigroup (Sum a) where
 #else
   Sum a <> Sum b = Sum (a + b)
 #endif
+  stimes n (Sum a) = Sum (fromIntegral n * a)
 
 instance Num a => Semigroup (Product a) where
 #ifdef USE_COERCE
@@ -354,6 +334,47 @@ instance Num a => Semigroup (Product a) where
 #else
   Product a <> Product b = Product (a * b)
 #endif
+  stimes n (Product a) = Product (a ^ n)
+
+-- | This is a valid definition of 'stimes' for a 'Monoid'.
+-- 
+-- Unlike the default definition of 'stimes', it is defined for 0
+-- and so it should be preferred where possible.
+stimesMonoid :: (Integral b, Monoid a) => b -> a -> a
+stimesMonoid n x0 = case compare n 0 of
+  LT -> error "stimesMonoid: negative multiplier"
+  EQ -> mempty
+  GT -> f x0 n
+    where
+      f x y
+        | even y = f (x `mappend` x) (y `quot` 2)
+        | y == 1 = x
+        | otherwise = g (x `mappend` x) (pred y  `quot` 2) x
+      g x y z
+        | even y = g (x `mappend` x) (y `quot` 2) z
+        | y == 1 = x `mappend` z
+        | otherwise = g (x `mappend` x) (pred y `quot` 2) (x `mappend` z)
+
+-- | This is a valid definition of 'stimes' for an idempotent 'Monoid'.
+--
+-- When @mappend x x = x@, this definition should be preferred, because it
+-- works in /O(1)/ rather than /O(log n)/
+stimesIdempotentMonoid :: (Integral b, Monoid a) => b -> a -> a
+stimesIdempotentMonoid n x = case compare n 0 of
+  LT -> error "stimesIdempotentMonoid: negative multiplier"
+  EQ -> mempty
+  GT -> x
+{-# INLINE stimesIdempotentMonoid #-}
+
+-- | This is a valid definition of 'stimes' for an idempotent 'Semigroup'.
+--
+-- When @x <> x = x@, this definition should be preferred, because it
+-- works in /O(1)/ rather than /O(log n)/.
+stimesIdempotent :: Integral b => b -> a -> a
+stimesIdempotent n x 
+  | n <= 0 = error "stimesIdempotent: positive multiplier expected"
+  | otherwise = x
+{-# INLINE stimesIdempotent #-}
 
 instance Semigroup a => Semigroup (Const a b) where
 #ifdef USE_COERCE
@@ -361,17 +382,18 @@ instance Semigroup a => Semigroup (Const a b) where
 #else
   Const a <> Const b = Const (a <> b)
 #endif
+  stimes n (Const a) = Const (stimes n a)
 
 #if MIN_VERSION_base(3,0,0)
 instance Semigroup (Monoid.First a) where
   Monoid.First Nothing <> b = b
   a                    <> _ = a
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 
 instance Semigroup (Monoid.Last a) where
   a <> Monoid.Last Nothing = a
   _ <> b                   = b
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 #endif
 
 #if MIN_VERSION_base(4,8,0)
@@ -381,12 +403,13 @@ instance Alternative f => Semigroup (Alt f a) where
 # else
   Alt a <> Alt b = Alt (a <|> b)
 # endif
+  stimes = stimesMonoid
 #endif
 
 #if MIN_VERSION_base(4,8,0)
 instance Semigroup Void where
   a <> _ = a
-  times1p _ a = a
+  stimes = stimesIdempotent
 #endif
 
 instance Semigroup (NonEmpty a) where
@@ -435,7 +458,7 @@ instance Ord a => Semigroup (Min a) where
 #else
   Min a <> Min b = Min (a `min` b)
 #endif
-  times1p _ a = a
+  stimes = stimesIdempotent
 
 instance (Ord a, Bounded a) => Monoid (Min a) where
   mempty = maxBound
@@ -520,7 +543,7 @@ instance Ord a => Semigroup (Max a) where
 #else
   Max a <> Max b = Max (a `max` b)
 #endif
-  times1p _ a = a
+  stimes = stimesIdempotent
 
 instance (Ord a, Bounded a) => Monoid (Max a) where
   mempty = minBound
@@ -662,7 +685,7 @@ instance Hashable a => Hashable (First a) where
 
 instance Semigroup (First a) where
   a <> _ = a
-  times1p _ a = a
+  stimes = stimesIdempotent
 
 instance Functor First where
   fmap f (First x) = First (f x)
@@ -731,7 +754,7 @@ instance Hashable a => Hashable (Last a) where
 
 instance Semigroup (Last a) where
   _ <> b = b
-  times1p _ a = a
+  stimes = stimesIdempotent
 
 instance Functor Last where
   fmap f (Last x) = Last (f x)
@@ -796,10 +819,11 @@ instance Semigroup Text.Builder where
 #ifdef MIN_VERSION_unordered_containers
 instance (Hashable k, Eq k) => Semigroup (Lazy.HashMap k a) where
   (<>) = mappend
+  stimes = stimesIdempotentMonoid
 
 instance (Hashable a, Eq a) => Semigroup (HashSet a) where
   (<>) = mappend
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 #endif
 
 -- | Provide a Semigroup for an arbitrary Monoid.
@@ -858,23 +882,11 @@ instance NFData m => NFData (WrappedMonoid m) where
 
 -- | Repeat a value @n@ times.
 --
--- > timesN n a = a <> a <> ... <> a  -- using <> (n-1) times
---
--- Implemented using 'times1p'.
---
--- /Deprecated since 0.18/
-timesN :: Monoid a => Natural -> a -> a
-timesN n x | n == 0    = mempty
-           | otherwise = unwrapMonoid . times1p (pred n) . WrapMonoid $ x
-
-{-# DEPRECATED timesN "Use 'mtimesDefault' instead" #-}
-{-# INLINE timesN #-}
-
--- | Repeat a value @n@ times.
---
 -- > mtimesDefault n a = a <> a <> ... <> a  -- using <> (n-1) times
 --
--- Implemented using 'stimes' and 'mempty'
+-- Implemented using 'stimes' and 'mempty'.
+--
+-- This is a suitable definition for an 'mtimes' member of 'Monoid'.
 --
 -- @since 0.18
 mtimesDefault :: (Integral b, Monoid a) => b -> a -> a
@@ -960,6 +972,11 @@ instance Semigroup a => Semigroup (Option a) where
 #else
   Option a <> Option b = Option (a <> b)
 #endif
+  stimes _ (Option Nothing) = Option Nothing
+  stimes n (Option (Just a)) = case compare n 0 of
+    LT -> error "stimes: Option, negative multiplier"
+    EQ -> Option Nothing
+    GT -> Option (Just (stimes n a))
 
 instance Semigroup a => Monoid (Option a) where
   mempty = Option Nothing
@@ -975,26 +992,26 @@ instance Semigroup (Seq a) where
 
 instance Semigroup IntSet where
   (<>) = mappend
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 
 instance Ord a => Semigroup (Set a) where
   (<>) = mappend
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 
 instance Semigroup (IntMap v) where
   (<>) = mappend
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 
 instance Ord k => Semigroup (Map k v) where
   (<>) = mappend
-  times1p _ a = a
+  stimes = stimesIdempotentMonoid
 #endif
 
 #if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
 instance Semigroup (Proxy s) where
   _ <> _ = Proxy
   sconcat _ = Proxy
-  times1p _ _ = Proxy
+  stimes _ _ = Proxy
 #endif
 
 #ifdef MIN_VERSION_tagged
@@ -1005,3 +1022,4 @@ instance Semigroup a => Semigroup (Tagged s a) where
   Tagged a <> Tagged b = Tagged (a <> b)
 # endif
 #endif
+  stimes n (Tagged a) = Tagged (stimes n a)
