@@ -69,7 +69,7 @@ module Data.Semigroup (
   , First(..)
   , Last(..)
   , WrappedMonoid(..)
-  , timesN
+  , mtimesDefault
   -- * Re-exported monoids from Data.Monoid
   , Monoid(..)
   , Dual(..)
@@ -88,6 +88,8 @@ module Data.Semigroup (
   , Arg(..)
   , ArgMin
   , ArgMax
+  -- * Deprecations
+  , timesN
   ) where
 
 import Prelude hiding (foldr1)
@@ -237,7 +239,7 @@ class Semigroup a where
   -- The default definition uses peasant multiplication, exploiting associativity to only
   -- require /O(log n)/ uses of @\<\>@.
   --
-  -- See also 'timesN'.
+  -- See also 'stimes1p'.
   --
   -- /Deprecated since 0.18/
 
@@ -256,7 +258,7 @@ class Semigroup a where
 -- The default definition uses peasant multiplication, exploiting associativity to only
 -- require /O(log n)/ uses of @\<\>@.
 --
--- See also 'timesN'.
+-- See also 'stimes'.
 --
 -- @since 0.18
 stimes1p :: (Integral b, Semigroup a) => b -> a -> a
@@ -859,11 +861,26 @@ instance NFData m => NFData (WrappedMonoid m) where
 -- > timesN n a = a <> a <> ... <> a  -- using <> (n-1) times
 --
 -- Implemented using 'times1p'.
+--
+-- /Deprecated since 0.18/
 timesN :: Monoid a => Natural -> a -> a
 timesN n x | n == 0    = mempty
            | otherwise = unwrapMonoid . times1p (pred n) . WrapMonoid $ x
+
+{-# DEPRECATED timesN "Use 'mtimesDefault' instead" #-}
 {-# INLINE timesN #-}
 
+-- | Repeat a value @n@ times.
+--
+-- > mtimesDefault n a = a <> a <> ... <> a  -- using <> (n-1) times
+--
+-- Implemented using 'stimes' and 'mempty'
+--
+-- @since 0.18
+mtimesDefault :: (Integral b, Monoid a) => b -> a -> a
+mtimesDefault n x
+  | n == 0    = mempty
+  | otherwise = unwrapMonoid (stimes n (WrapMonoid x))
 
 -- | 'Option' is effectively 'Maybe' with a better instance of 'Monoid', built off of an underlying 'Semigroup'
 -- instead of an underlying 'Monoid'.
