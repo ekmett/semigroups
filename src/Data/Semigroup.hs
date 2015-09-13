@@ -213,7 +213,7 @@ class Semigroup a where
   -- By making this a member of the class, idempotent semigroups and monoids can upgrade this to execute in
   -- /O(1)/ by picking @stimes = stimesIdempotent@ or @stimes = stimesIdempotentMonoid@ respectively.
   --
-  -- @since 0.18
+  -- @since 0.17
   stimes :: Integral b => b -> a -> a
   stimes y0 x0
     | y0 <= 0   = error "stimes: positive multiplier expected"
@@ -888,7 +888,7 @@ instance NFData m => NFData (WrappedMonoid m) where
 --
 -- This is a suitable definition for an 'mtimes' member of 'Monoid'.
 --
--- @since 0.18
+-- @since 0.17
 mtimesDefault :: (Integral b, Monoid a) => b -> a -> a
 mtimesDefault n x
   | n == 0    = mempty

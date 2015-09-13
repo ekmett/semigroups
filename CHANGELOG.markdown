@@ -1,6 +1,6 @@
-0.18
-----
-* Removed `times1p` in favor of `stimes`.
+0.17.0.1
+--------
+* Fixed the `@since` annotations
 
 0.17
 ----
@@ -8,6 +8,7 @@
 * Renamed `sortOn` to `sortWith` to match the "Comprehensive comprehensions" paper and `TransformListComp` extension.
 * Add `Semigroup` instances for `Alt`, `Void`, `Proxy` and `Tagged`
 * Add `Num` instances for `Min` and `Max`
+* Removed `times1p` in favor of `stimes`.
 
 0.16.2.2
 --------
