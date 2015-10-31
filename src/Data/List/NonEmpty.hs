@@ -102,11 +102,6 @@ module Data.List.NonEmpty (
    , zip         -- :: NonEmpty a -> NonEmpty b -> NonEmpty (a,b)
    , zipWith     -- :: (a -> b -> c) -> NonEmpty a -> NonEmpty b -> NonEmpty c
    , unzip       -- :: NonEmpty (a, b) -> (NonEmpty a, NonEmpty b)
-   -- * Functions on streams of characters
-   , words       -- :: NonEmpty Char -> NonEmpty String
-   , unwords     -- :: NonEmpty String -> NonEmpty Char
-   , lines       -- :: NonEmpty Char -> NonEmpty String
-   , unlines     -- :: NonEmpty String -> NonEmpty Char
    -- * Converting to and from a list
    , fromList    -- :: [a] -> NonEmpty a
    , toList      -- :: NonEmpty a -> [a]
@@ -584,36 +579,6 @@ zipWith f ~(x :| xs) ~(y :| ys) = f x y :| List.zipWith f xs ys
 unzip :: Functor f => f (a,b) -> (f a, f b)
 unzip xs = (fst <$> xs, snd <$> xs)
 {-# INLINE unzip #-}
-
--- | The 'words' function breaks a stream of characters into a
--- stream of words, which were delimited by white space.
---
--- /Beware/: if the input contains no words (i.e. is entirely
--- whitespace), this will cause an error.
-words :: NonEmpty Char -> NonEmpty String
-words = lift List.words
-{-# INLINE words #-}
-
--- | The 'unwords' function is an inverse operation to 'words'. It
--- joins words with separating spaces.
---
--- /Beware/: the input @(\"\" :| [])@ will cause an error.
-unwords :: NonEmpty String -> NonEmpty Char
-unwords = lift List.unwords
-{-# INLINE unwords #-}
-
--- | The 'lines' function breaks a stream of characters into a stream
--- of strings at newline characters. The resulting strings do not
--- contain newlines.
-lines :: NonEmpty Char -> NonEmpty String
-lines = lift List.lines
-{-# INLINE lines #-}
-
--- | The 'unlines' function is an inverse operation to 'lines'. It
--- joins lines, after appending a terminating newline to each.
-unlines :: NonEmpty String -> NonEmpty Char
-unlines = lift List.unlines
-{-# INLINE unlines #-}
 
 -- | The 'nub' function removes duplicate elements from a list. In
 -- particular, it keeps only the first occurence of each element.
