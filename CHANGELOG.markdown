@@ -1,3 +1,6 @@
+0.18
+--------
+* Removed the partial functions `words`, `unwords`, `lines`, `unlines`
 
 0.17.0.1
 --------
