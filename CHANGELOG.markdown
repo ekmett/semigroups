@@ -1,3 +1,7 @@
+0.18.0.1
+--------
+* Added support for `base-4.9`
+
 0.18
 --------
 * Removed the partial functions `words`, `unwords`, `lines`, `unlines`
