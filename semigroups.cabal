@@ -72,6 +72,14 @@ flag text
   default: True
   manual: True
 
+flag transformers
+  description:
+    You can disable the use of the `transformers` package using `-f-transformers`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sa    ndboxes for expert users.
+  default: True
+  manual: True
+
 flag unordered-containers
   description:
     You can disable the use of the `unordered-containers` package using `-f-unordered-containers`.
@@ -126,3 +134,6 @@ library
 
     if flag(hashable) && flag(unordered-containers)
       build-depends: unordered-containers >= 0.2  && < 0.3
+
+    if flag(transformers)
+      build-depends: transformers >= 0.2 && < 0.6

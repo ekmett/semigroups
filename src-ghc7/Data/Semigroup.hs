@@ -141,6 +141,10 @@ import Data.ByteString.Short
 # endif
 #endif
 
+#if MIN_VERSION_base(4,8,0) || defined(MIN_VERSION_transformers)
+import Data.Functor.Identity
+#endif
+
 #if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
 import Data.Proxy
 #endif
@@ -337,7 +341,7 @@ instance Num a => Semigroup (Product a) where
   stimes n (Product a) = Product (a ^ n)
 
 -- | This is a valid definition of 'stimes' for a 'Monoid'.
--- 
+--
 -- Unlike the default definition of 'stimes', it is defined for 0
 -- and so it should be preferred where possible.
 stimesMonoid :: (Integral b, Monoid a) => b -> a -> a
@@ -371,7 +375,7 @@ stimesIdempotentMonoid n x = case compare n 0 of
 -- When @x <> x = x@, this definition should be preferred, because it
 -- works in /O(1)/ rather than /O(log n)/.
 stimesIdempotent :: Integral b => b -> a -> a
-stimesIdempotent n x 
+stimesIdempotent n x
   | n <= 0 = error "stimesIdempotent: positive multiplier expected"
   | otherwise = x
 {-# INLINE stimesIdempotent #-}
@@ -1007,6 +1011,16 @@ instance Ord k => Semigroup (Map k v) where
   stimes = stimesIdempotentMonoid
 #endif
 
+#if MIN_VERSION_base(4,8,0) || defined(MIN_VERSION_transformers)
+instance Semigroup a => Semigroup (Identity a) where
+# ifdef USE_COERCE
+  (<>) = coerce ((<>) :: a -> a -> a)
+# else
+  Identity a <> Identity b = Identity (a <> b)
+# endif
+  stimes n (Identity a) = Identity (stimes n a)
+#endif
+
 #if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
 instance Semigroup (Proxy s) where
   _ <> _ = Proxy
@@ -1021,5 +1035,5 @@ instance Semigroup a => Semigroup (Tagged s a) where
 # else
   Tagged a <> Tagged b = Tagged (a <> b)
 # endif
-#endif
   stimes n (Tagged a) = Tagged (stimes n a)
+#endif
