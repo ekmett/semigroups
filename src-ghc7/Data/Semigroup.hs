@@ -126,6 +126,10 @@ import Data.Map (Map)
 import Data.IntMap (IntMap)
 #endif
 
+#ifdef MIN_VERSION_binary
+import qualified Data.Binary.Builder as Builder
+#endif
+
 #ifdef MIN_VERSION_bytestring
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
@@ -790,6 +794,11 @@ instance NFData a => NFData (Last a) where
 #endif
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
+
+#ifdef MIN_VERSION_binary
+instance Semigroup Builder.Builder where
+  (<>) = mappend
+#endif
 
 #ifdef MIN_VERSION_bytestring
 instance Semigroup Strict.ByteString where

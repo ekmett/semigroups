@@ -32,6 +32,14 @@ flag hashable
   default: True
   manual: True
 
+flag binary
+  description:
+    You can disable the use of the `binary` package using `-f-binary`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+  default: True
+  manual: True
+
 flag bytestring
   description:
     You can disable the use of the `bytestring` package using `-f-bytestring`.
@@ -113,6 +121,9 @@ library
 
     if impl(ghc >= 7.4 && < 7.5)
       build-depends: ghc-prim
+
+    if flag(binary)
+      build-depends: binary
 
     if flag(bytestring)
       build-depends: bytestring >= 0.9 && < 1
