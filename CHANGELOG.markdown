@@ -1,3 +1,7 @@
+0.18.1
+------
+* Add the missing instance for `Data.Binary.Builder.Builder`.
+
 0.18.0.1
 --------
 * Added support for `base-4.9`
