@@ -48,6 +48,14 @@ flag bytestring
   default: True
   manual: True
 
+flag bytestring-builder
+  description:
+    You can disable the use of the `bytestring-builder` package using `-f-bytestring-builder`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+  default: True
+  manual: False
+
 flag containers
   description:
     You can disable the use of the `containers` package using `-f-containers`.
@@ -84,7 +92,7 @@ flag transformers
   description:
     You can disable the use of the `transformers` package using `-f-transformers`.
     .
-    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sa    ndboxes for expert users.
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
@@ -126,7 +134,11 @@ library
       build-depends: binary
 
     if flag(bytestring)
-      build-depends: bytestring >= 0.9 && < 1
+      if flag(bytestring-builder)
+        build-depends: bytestring         >= 0.9    && < 0.10.4,
+                       bytestring-builder >= 0.10.4 && < 1
+      else
+        build-depends: bytestring         >= 0.10.4 && < 1
 
     if flag(containers)
       build-depends: containers >= 0.3 && < 0.6

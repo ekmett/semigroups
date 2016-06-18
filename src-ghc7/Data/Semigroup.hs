@@ -136,13 +136,13 @@ import qualified Data.Binary.Builder as Builder
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
 
-# if MIN_VERSION_bytestring(0,10,2)
+# if MIN_VERSION_bytestring(0,10,2) || defined(MIN_VERSION_bytestring_builder)
 import qualified Data.ByteString.Builder as ByteString
 # elif MIN_VERSION_bytestring(0,10,0)
 import qualified Data.ByteString.Lazy.Builder as ByteString
 # endif
 
-# if MIN_VERSION_bytestring(0,10,4)
+# if MIN_VERSION_bytestring(0,10,4) || defined(MIN_VERSION_bytestring_builder)
 import Data.ByteString.Short
 # endif
 #endif
@@ -811,12 +811,12 @@ instance Semigroup Strict.ByteString where
 instance Semigroup Lazy.ByteString where
   (<>) = mappend
 
-# if MIN_VERSION_bytestring(0,10,0)
+# if MIN_VERSION_bytestring(0,10,0) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ByteString.Builder where
   (<>) = mappend
 # endif
 
-# if MIN_VERSION_bytestring(0,10,4)
+# if MIN_VERSION_bytestring(0,10,4) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ShortByteString where
   (<>) = mappend
 # endif
