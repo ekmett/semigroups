@@ -8,7 +8,7 @@
 #if __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DefaultSignatures
 {-# LANGUAGE DefaultSignatures #-}
-#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ >= 708
+#if (defined(MIN_VERSION_hashable)) || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
 #else
 {-# LANGUAGE Safe #-}
@@ -136,22 +136,22 @@ import qualified Data.Binary.Builder as Builder
 import Data.ByteString as Strict
 import Data.ByteString.Lazy as Lazy
 
-# if MIN_VERSION_bytestring(0,10,2) || defined(MIN_VERSION_bytestring_builder)
+# if (MIN_VERSION_bytestring(0,10,2)) || defined(MIN_VERSION_bytestring_builder)
 import qualified Data.ByteString.Builder as ByteString
 # elif MIN_VERSION_bytestring(0,10,0)
 import qualified Data.ByteString.Lazy.Builder as ByteString
 # endif
 
-# if MIN_VERSION_bytestring(0,10,4) || defined(MIN_VERSION_bytestring_builder)
+# if (MIN_VERSION_bytestring(0,10,4)) || defined(MIN_VERSION_bytestring_builder)
 import Data.ByteString.Short
 # endif
 #endif
 
-#if MIN_VERSION_base(4,8,0) || defined(MIN_VERSION_transformers)
+#if (MIN_VERSION_base(4,8,0)) || defined(MIN_VERSION_transformers)
 import Data.Functor.Identity
 #endif
 
-#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
+#if (MIN_VERSION_base(4,7,0)) || defined(MIN_VERSION_tagged)
 import Data.Proxy
 #endif
 
@@ -811,12 +811,12 @@ instance Semigroup Strict.ByteString where
 instance Semigroup Lazy.ByteString where
   (<>) = mappend
 
-# if MIN_VERSION_bytestring(0,10,0) || defined(MIN_VERSION_bytestring_builder)
+# if (MIN_VERSION_bytestring(0,10,0)) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ByteString.Builder where
   (<>) = mappend
 # endif
 
-# if MIN_VERSION_bytestring(0,10,4) || defined(MIN_VERSION_bytestring_builder)
+# if (MIN_VERSION_bytestring(0,10,4)) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ShortByteString where
   (<>) = mappend
 # endif
@@ -1024,7 +1024,7 @@ instance Ord k => Semigroup (Map k v) where
   stimes = stimesIdempotentMonoid
 #endif
 
-#if MIN_VERSION_base(4,8,0) || defined(MIN_VERSION_transformers)
+#if (MIN_VERSION_base(4,8,0)) || defined(MIN_VERSION_transformers)
 instance Semigroup a => Semigroup (Identity a) where
 # ifdef USE_COERCE
   (<>) = coerce ((<>) :: a -> a -> a)
@@ -1034,7 +1034,7 @@ instance Semigroup a => Semigroup (Identity a) where
   stimes n (Identity a) = Identity (stimes n a)
 #endif
 
-#if MIN_VERSION_base(4,7,0) || defined(MIN_VERSION_tagged)
+#if (MIN_VERSION_base(4,7,0)) || defined(MIN_VERSION_tagged)
 instance Semigroup (Proxy s) where
   _ <> _ = Proxy
   sconcat _ = Proxy
