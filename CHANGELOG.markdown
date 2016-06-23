@@ -1,3 +1,8 @@
+0.18.2
+------
+* Depend on the `bytestring-builder` package to ensure `Semigroup` instances for bytestring `Builder` and `ShortByteString` are always defined
+* Allow building with `binary-0.8.3` and later
+
 0.18.1
 ------
 * Add the missing instance for `Data.Binary.Builder.Builder`.
