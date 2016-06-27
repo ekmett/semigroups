@@ -60,7 +60,7 @@ flag containers
   description:
     You can disable the use of the `containers` package using `-f-containers`.
     .
-    Disabing this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
@@ -68,7 +68,7 @@ flag deepseq
   description:
     You can disable the use of the `deepseq` package using `-f-deepseq`.
     .
-    Disabing this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
