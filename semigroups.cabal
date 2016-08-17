@@ -50,9 +50,9 @@ flag bytestring
 
 flag bytestring-builder
   description:
-    You can disable the use of the `bytestring-builder` package using `-f-bytestring-builder`.
+    Decides whether to use an older version of bytestring along with bytestring-builder or just a newer version of bytestring.
     .
-    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
+    This flag normally toggles automatically but you can use `-fbytestring-builder` or `-f-bytestring-builder` to explicitly change it.
   default: True
   manual: False
 
