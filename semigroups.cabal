@@ -53,7 +53,7 @@ flag bytestring-builder
     Decides whether to use an older version of bytestring along with bytestring-builder or just a newer version of bytestring.
     .
     This flag normally toggles automatically but you can use `-fbytestring-builder` or `-f-bytestring-builder` to explicitly change it.
-  default: True
+  default: False
   manual: False
 
 flag containers
