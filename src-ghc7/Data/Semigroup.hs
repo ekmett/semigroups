@@ -1057,10 +1057,14 @@ instance Semigroup a => Semigroup (Tagged s a) where
 instance Semigroup a => Semigroup (IO a) where
     (<>) = liftA2 (<>)
 
+#if MIN_VERSION_base(4,4,0)
 instance Semigroup Event where
     (<>) = mappend
     stimes = stimesMonoid
+#endif
 
+#if MIN_VERSION_base(4,8,1)
 instance Semigroup Lifetime where
     (<>) = mappend
     stimes = stimesMonoid
+#endif
