@@ -1,3 +1,8 @@
+next
+----
+* Add `Semigroup` instance for `IO`, as well as for `Event` and `Lifetime` from
+  `GHC.Event`
+
 0.18.2
 ------
 * Depend on the `bytestring-builder` package to ensure `Semigroup` instances for bytestring `Builder` and `ShortByteString` are always defined

@@ -113,6 +113,9 @@ import Control.Monad
 import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
 import Data.List.NonEmpty
+#if MIN_VERSION_base(4,4,0)
+import GHC.Event
+#endif
 
 #ifdef MIN_VERSION_deepseq
 import Control.DeepSeq (NFData(..))
@@ -1050,3 +1053,14 @@ instance Semigroup a => Semigroup (Tagged s a) where
 # endif
   stimes n (Tagged a) = Tagged (stimes n a)
 #endif
+
+instance Semigroup a => Semigroup (IO a) where
+    (<>) = liftA2 (<>)
+
+instance Semigroup Event where
+    (<>) = mappend
+    stimes = stimesMonoid
+
+instance Semigroup Lifetime where
+    (<>) = mappend
+    stimes = stimesMonoid
