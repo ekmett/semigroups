@@ -113,7 +113,7 @@ import Control.Monad
 import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
 import Data.List.NonEmpty
-#if MIN_VERSION_base(4,4,0)
+#if MIN_VERSION_base(4,4,0) && !defined(mingw32_HOST_OS)
 import GHC.Event
 #endif
 
@@ -1057,14 +1057,16 @@ instance Semigroup a => Semigroup (Tagged s a) where
 instance Semigroup a => Semigroup (IO a) where
     (<>) = liftA2 (<>)
 
-#if MIN_VERSION_base(4,4,0)
+#if !defined(mingw32_HOST_OS)
+# if MIN_VERSION_base(4,4,0)
 instance Semigroup Event where
     (<>) = mappend
     stimes = stimesMonoid
-#endif
+# endif
 
-#if MIN_VERSION_base(4,8,1)
+# if MIN_VERSION_base(4,8,1)
 instance Semigroup Lifetime where
     (<>) = mappend
     stimes = stimesMonoid
+# endif
 #endif
