@@ -13,7 +13,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 704
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DeriveGeneric
 {-# LANGUAGE DeriveGeneric #-}
 #endif
