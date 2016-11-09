@@ -111,7 +111,7 @@ library
 
   build-depends: base >= 2 && < 5
 
-  if impl(ghc >= 7.4)
+  if impl(ghc >= 7.2)
     exposed-modules:
       Data.Semigroup.Generic
 
@@ -127,7 +127,7 @@ library
     if impl(ghc < 7.10)
       build-depends: nats >= 0.1 && < 2
 
-    if impl(ghc >= 7.4 && < 7.5)
+    if impl(ghc >= 7.2 && < 7.5)
       build-depends: ghc-prim
 
     if flag(binary)

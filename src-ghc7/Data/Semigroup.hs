@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#if __GLASGOW_HASKELL__ >= 704
+#if __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DeriveGeneric
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}

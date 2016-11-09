@@ -2,6 +2,8 @@ next
 ----
 * Add `Semigroup` instance for `IO`, as well as for `Event` and `Lifetime` from
   `GHC.Event`
+* Define `Generic` instances back to GHC 7.2 (previously, they were only back
+  to GHC 7.4)
 
 0.18.2
 ------
