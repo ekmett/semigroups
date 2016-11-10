@@ -1,7 +1,8 @@
 {-# LANGUAGE CPP #-}
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ >= 708
+#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ == 702 \
+                                  || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
 #else
 {-# LANGUAGE Safe #-}
@@ -16,10 +17,9 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DeriveGeneric
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 #endif
 
 #ifndef MIN_VERSION_base
@@ -136,7 +136,7 @@ import Control.Monad.Zip (MonadZip(..))
 #endif
 
 #ifdef LANGUAGE_DeriveDataTypeable
-import Data.Data
+import Data.Data hiding (Infix)
 #endif
 
 #if MIN_VERSION_base(4,8,0)
@@ -196,6 +196,28 @@ instance Exts.IsList (NonEmpty a) where
   type Item (NonEmpty a) = a
   fromList = fromList
   toList = toList
+#endif
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 NonEmpty where
+  type Rep1 NonEmpty
+    = D1 D1NonEmpty
+        (C1 C1_0NonEmpty
+             (S1 NoSelector Par1
+          :*: S1 NoSelector (Rec1 [])))
+  from1 (h :| t) = M1 (M1 (M1 (Par1 h) :*: M1 (Rec1 t)))
+  to1 (M1 (M1 (M1 h :*: M1 t))) = unPar1 h :| unRec1 t
+
+instance Datatype D1NonEmpty where
+  datatypeName _ = "NonEmpty"
+  moduleName   _ = "Data.List.NonEmpty"
+
+instance Constructor C1_0NonEmpty where
+  conName   _ = ":|"
+  conFixity _ = Infix RightAssociative 5
+
+data D1NonEmpty
+data C1_0NonEmpty
 #endif
 
 #ifdef MIN_VERSION_deepseq

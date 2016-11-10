@@ -8,7 +8,8 @@
 #if __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DefaultSignatures
 {-# LANGUAGE DefaultSignatures #-}
-#if (defined(MIN_VERSION_hashable)) || __GLASGOW_HASKELL__ >= 708
+#if (defined(MIN_VERSION_hashable)) || __GLASGOW_HASKELL__ == 702 \
+                                    || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
 #else
 {-# LANGUAGE Safe #-}
@@ -18,8 +19,10 @@
 #if __GLASGOW_HASKELL__ >= 702
 #define LANGUAGE_DeriveGeneric
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 #endif
 
 #if __GLASGOW_HASKELL__ >= 706
@@ -514,6 +517,28 @@ instance Num a => Num (Min a) where
   signum (Min a) = Min (signum a)
   fromInteger    = Min . fromInteger
 
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 Min where
+  type Rep1 Min = D1 D1Min (C1 C1_0Min (S1 S1_0_0Min Par1))
+  from1 (Min x) = M1 (M1 (M1 (Par1 x)))
+  to1 (M1 (M1 (M1 x))) = Min (unPar1 x)
+
+instance Datatype D1Min where
+  datatypeName _ = "Min"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0Min where
+  conName     _ = "Min"
+  conIsRecord _ = True
+
+instance Selector S1_0_0Min where
+  selName _ = "getMin"
+
+data D1Min
+data C1_0Min
+data S1_0_0Min
+#endif
+
 newtype Max a = Max { getMax :: a } deriving
   ( Eq, Ord, Show, Read
 #ifdef LANGUAGE_DeriveDataTypeable
@@ -599,6 +624,27 @@ instance Num a => Num (Max a) where
   signum (Max a) = Max (signum a)
   fromInteger    = Max . fromInteger
 
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 Max where
+  type Rep1 Max = D1 D1Max (C1 C1_0Max (S1 S1_0_0Max Par1))
+  from1 (Max x) = M1 (M1 (M1 (Par1 x)))
+  to1 (M1 (M1 (M1 x))) = Max (unPar1 x)
+
+instance Datatype D1Max where
+  datatypeName _ = "Max"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0Max where
+  conName     _ = "Max"
+  conIsRecord _ = True
+
+instance Selector S1_0_0Max where
+  selName _ = "getMax"
+
+data D1Max
+data C1_0Max
+data S1_0_0Max
+#endif
 
 -- | 'Arg' isn't itself a 'Semigroup' in its own right, but it can be placed inside 'Min' and 'Max'
 -- to compute an arg min or arg max.
@@ -656,6 +702,27 @@ instance (Hashable a, Hashable b) => Hashable (Arg a b) where
 #if MIN_VERSION_base(4,8,0)
 instance Bifunctor Arg where
   bimap f g (Arg a b) = Arg (f a) (g b)
+#endif
+
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 (Arg a) where
+  type Rep1 (Arg a)
+    = D1 D1Arg
+        (C1 C1_0Arg
+             (S1 NoSelector (Rec0 a)
+          :*: S1 NoSelector Par1))
+  from1 (Arg a b) = M1 (M1 (M1 (K1 a) :*: M1 (Par1 b)))
+  to1 (M1 (M1 (M1 a :*: M1 b))) = Arg (unK1 a) (unPar1 b)
+
+instance Datatype D1Arg where
+  datatypeName _ = "Arg"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0Arg where
+  conName _ = "Arg"
+
+data D1Arg
+data C1_0Arg
 #endif
 
 -- | Use @'Option' ('First' a)@ to get the behavior of 'Data.Monoid.First' from @Data.Monoid@.
@@ -728,6 +795,28 @@ instance NFData a => NFData (First a) where
   rnf (First a) = rnf a
 #endif
 
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 First where
+  type Rep1 First = D1 D1First (C1 C1_0First (S1 S1_0_0First Par1))
+  from1 (First x) = M1 (M1 (M1 (Par1 x)))
+  to1 (M1 (M1 (M1 x))) = First (unPar1 x)
+
+instance Datatype D1First where
+  datatypeName _ = "First"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0First where
+  conName     _ = "First"
+  conIsRecord _ = True
+
+instance Selector S1_0_0First where
+  selName _ = "getFirst"
+
+data D1First
+data C1_0First
+data S1_0_0First
+#endif
+
 -- | Use @'Option' ('Last' a)@ to get the behavior of 'Data.Monoid.Last' from @Data.Monoid@
 newtype Last a = Last { getLast :: a } deriving
   ( Eq, Ord, Show, Read
@@ -796,6 +885,28 @@ instance MonadFix Last where
 #ifdef MIN_VERSION_deepseq
 instance NFData a => NFData (Last a) where
   rnf (Last a) = rnf a
+#endif
+
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 Last where
+  type Rep1 Last = D1 D1Last (C1 C1_0Last (S1 S1_0_0Last Par1))
+  from1 (Last x) = M1 (M1 (M1 (Par1 x)))
+  to1 (M1 (M1 (M1 x))) = Last (unPar1 x)
+
+instance Datatype D1Last where
+  datatypeName _ = "Last"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0Last where
+  conName     _ = "Last"
+  conIsRecord _ = True
+
+instance Selector S1_0_0Last where
+  selName _ = "getLast"
+
+data D1Last
+data C1_0Last
+data S1_0_0Last
 #endif
 
 -- (==)/XNOR on Bool forms a 'Semigroup', but has no good name
@@ -900,6 +1011,28 @@ instance NFData m => NFData (WrappedMonoid m) where
   rnf (WrapMonoid a) = rnf a
 #endif
 
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 WrappedMonoid where
+  type Rep1 WrappedMonoid = D1 D1WrappedMonoid (C1 C1_0WrappedMonoid (S1 S1_0_0WrappedMonoid Par1))
+  from1 (WrapMonoid x) = M1 (M1 (M1 (Par1 x)))
+  to1 (M1 (M1 (M1 x))) = WrapMonoid (unPar1 x)
+
+instance Datatype D1WrappedMonoid where
+  datatypeName _ = "WrappedMonoid"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0WrappedMonoid where
+  conName     _ = "WrapMonoid"
+  conIsRecord _ = True
+
+instance Selector S1_0_0WrappedMonoid where
+  selName _ = "unwrapMonoid"
+
+data D1WrappedMonoid
+data C1_0WrappedMonoid
+data S1_0_0WrappedMonoid
+#endif
+
 -- | Repeat a value @n@ times.
 --
 -- > mtimesDefault n a = a <> a <> ... <> a  -- using <> (n-1) times
@@ -1001,6 +1134,28 @@ instance Semigroup a => Semigroup (Option a) where
 instance Semigroup a => Monoid (Option a) where
   mempty = Option Nothing
   mappend = (<>)
+
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
+instance Generic1 Option where
+  type Rep1 Option = D1 D1Option (C1 C1_0Option (S1 S1_0_0Option (Rec1 Maybe)))
+  from1 (Option x) = M1 (M1 (M1 (Rec1 x)))
+  to1 (M1 (M1 (M1 x))) = Option (unRec1 x)
+
+instance Datatype D1Option where
+  datatypeName _ = "Option"
+  moduleName   _ = "Data.Semigroup"
+
+instance Constructor C1_0Option where
+  conName     _ = "Option"
+  conIsRecord _ = True
+
+instance Selector S1_0_0Option where
+  selName _ = "getOption"
+
+data D1Option
+data C1_0Option
+data S1_0_0Option
+#endif
 
 -- | This lets you use a difference list of a 'Semigroup' as a 'Monoid'.
 diff :: Semigroup m => m -> Endo m
