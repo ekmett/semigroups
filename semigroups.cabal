@@ -90,7 +90,7 @@ flag text
 
 flag transformers
   description:
-    You can disable the use of the `transformers` package using `-f-transformers`.
+    You can disable the use of the `transformers` and `transformers-compat` packages using `-f-transformers`.
     .
     Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
@@ -159,4 +159,5 @@ library
       build-depends: unordered-containers >= 0.2  && < 0.3
 
     if flag(transformers)
-      build-depends: transformers >= 0.2 && < 0.6
+      build-depends: transformers        >= 0.2 && < 0.6
+                   , transformers-compat >= 0.5 && < 1

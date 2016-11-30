@@ -2,6 +2,7 @@ next
 ----
 * Add `Semigroup` instance for `IO`, as well as for `Event` and `Lifetime` from
   `GHC.Event`
+* Add `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
 * Define `Generic` and `Generic1` instances back to GHC 7.2, and expose the
   `Data.Semigroup.Generic` module on GHC 7.2
 

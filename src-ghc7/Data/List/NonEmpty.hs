@@ -153,6 +153,10 @@ import Data.Function (on)
 import Data.Hashable
 #endif
 
+#ifdef MIN_VERSION_transformers
+import Data.Functor.Classes (Eq1(..), Ord1(..), Read1(..), Show1(..))
+#endif
+
 import qualified Data.List as List
 import Data.Ord (comparing)
 
@@ -234,6 +238,44 @@ instance MonadZip NonEmpty where
   mzip     = zip
   mzipWith = zipWith
   munzip   = unzip
+#endif
+
+#ifdef MIN_VERSION_transformers
+# if !(MIN_VERSION_transformers(0,4,0)) || MIN_VERSION_transformers(0,5,0)
+instance Eq1 NonEmpty where
+  liftEq eq (a :| as) (b :| bs) = eq a b && liftEq eq as bs
+
+instance Ord1 NonEmpty where
+  liftCompare cmp (a :| as) (b :| bs) = cmp a b `mappend` liftCompare cmp as bs
+
+instance Read1 NonEmpty where
+  liftReadsPrec rdP rdL p s = readParen (p > 5) (\s' -> do
+    (a, s'') <- rdP 6 s'
+    (":|", s''') <- lex s''
+    (as, s'''') <- rdL s'''
+    return (a :| as, s'''')) s
+
+instance Show1 NonEmpty where
+  liftShowsPrec shwP shwL p (a :| as) = showParen (p > 5) $
+    shwP 6 a . showString " :| " . shwL as
+# else
+instance Eq1 NonEmpty where
+  eq1 (a :| as) (b :| bs) = a == b && as == bs
+
+instance Ord1 NonEmpty where
+  compare1 (a :| as) (b :| bs) = compare a b `mappend` compare as bs
+
+instance Read1 NonEmpty where
+  readsPrec1 p s = readParen (p > 5) (\s' -> do
+    (a, s'') <- readsPrec 6 s'
+    (":|", s''') <- lex s''
+    (as, s'''') <- readList s'''
+    return (a :| as, s'''')) s
+
+instance Show1 NonEmpty where
+  showsPrec1 p (a :| as) = showParen (p > 5) $
+    showsPrec 6 a . showString " :| " . showList as
+# endif
 #endif
 
 length :: NonEmpty a -> Int
