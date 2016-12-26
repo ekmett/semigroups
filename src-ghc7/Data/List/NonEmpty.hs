@@ -341,8 +341,10 @@ instance Foldable NonEmpty where
   foldl1 f ~(a :| as) = foldl f a as
   foldMap f ~(a :| as) = f a `mappend` foldMap f as
   fold ~(m :| ms) = m `mappend` fold ms
+#if MIN_VERSION_base(4,8,0)
   length = length
   toList = toList
+#endif
 
 -- | Extract the first element of the stream.
 head :: NonEmpty a -> a
