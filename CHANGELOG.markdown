@@ -1,5 +1,5 @@
-next
-----
+0.18.3
+------
 * Add `Semigroup` instance for `IO`, as well as for `Event` and `Lifetime` from
   `GHC.Event`
 * Add `Eq1`, `Ord1`, `Read1`, and `Show1` instances for `NonEmpty`
