@@ -69,6 +69,7 @@ module Data.Semigroup (
   , stimesIdempotent
   , stimesIdempotentMonoid
   , mtimesDefault
+  , sfoldMap
   -- * Semigroups
   , Min(..)
   , Max(..)
@@ -351,6 +352,11 @@ instance Num a => Semigroup (Product a) where
   Product a <> Product b = Product (a * b)
 #endif
   stimes n (Product a) = Product (a ^ n)
+
+-- | Map each element of the `NonEmpty` list to a semigroup and combine the
+-- results.
+sfoldMap :: Semigroup s => (a -> s) -> NonEmpty a -> s
+sfoldMap f = sconcat . fmap f
 
 -- | This is a valid definition of 'stimes' for a 'Monoid'.
 --
