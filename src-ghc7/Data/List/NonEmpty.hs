@@ -629,6 +629,7 @@ isPrefixOf (y:ys) (x :| xs) = (y == x) && List.isPrefixOf ys xs
   | n > 0  = xs List.!! (n - 1)
   | otherwise = error "NonEmpty.!! negative argument"
 {-# INLINE (!!) #-}
+infixl 9 !!
 
 -- | The 'zip' function takes two streams and returns a stream of
 -- corresponding pairs.
