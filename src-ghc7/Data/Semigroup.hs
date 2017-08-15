@@ -116,7 +116,7 @@ import Control.Monad
 import Control.Monad.Fix
 import qualified Data.Monoid as Monoid
 import Data.List.NonEmpty
-#if MIN_VERSION_base(4,4,0) && !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS)
+#if MIN_VERSION_base(4,4,0) && !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS) && !defined(ETA_VERSION)
 import GHC.Event
 #endif
 
@@ -1212,7 +1212,7 @@ instance Semigroup a => Semigroup (Tagged s a) where
 instance Semigroup a => Semigroup (IO a) where
     (<>) = liftA2 (<>)
 
-#if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS)
+#if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS) && !defined(ETA_VERSION)
 # if MIN_VERSION_base(4,4,0)
 instance Semigroup Event where
     (<>) = mappend
