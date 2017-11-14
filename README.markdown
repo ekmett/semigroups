@@ -7,7 +7,7 @@ Haskellers are usually familiar with monoids. A monoid has an appending operatio
 
 More formally, a semigroup is an algebraic structure consisting of a set together with an associative binary operation. A semigroup generalizes a monoid in that there might not exist an identity element. It also (originally) generalized a group (a monoid with all inverses) to a type where every element did not have to have an inverse, thus the name semigroup.
 
-Semigroups appear all over the place, except in the Haskell Prelude, so they are packaged here.
+`Data.Semigroup` and `Data.List.NonEmpty` were added to `base` as of 4.9.0.0. This package now offers a backwards-compatible API and some tools for deriving semigroups with generics.
 
 Contact Information
 -------------------
