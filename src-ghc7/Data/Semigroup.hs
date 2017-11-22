@@ -238,12 +238,18 @@ class Semigroup a where
       f x y
         | even y = f (x <> x) (y `quot` 2)
         | y == 1 = x
-        | otherwise = g (x <> x) (pred y  `quot` 2) x
+        | otherwise = g (x <> x) (y `quot` 2) x        -- See Note [Half of y - 1]
       g x y z
         | even y = g (x <> x) (y `quot` 2) z
         | y == 1 = x <> z
-        | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
+        | otherwise = g (x <> x) (y `quot` 2) (x <> z) -- See Note [Half of y - 1]
   {-# INLINE stimes #-}
+
+{- Note [Half of y - 1]
+   ~~~~~~~~~~~~~~~~~~~~~
+   Since y is guaranteed to be odd and positive here,
+   half of y - 1 can be computed as y `quot` 2, optimising subtraction away.
+-}
 
 -- | A generalization of 'Data.List.cycle' to an arbitrary 'Semigroup'.
 -- May fail to terminate for some values in some semigroups.
@@ -365,11 +371,11 @@ stimesMonoid n x0 = case compare n 0 of
       f x y
         | even y = f (x `mappend` x) (y `quot` 2)
         | y == 1 = x
-        | otherwise = g (x `mappend` x) (pred y  `quot` 2) x
+        | otherwise = g (x `mappend` x) (y  `quot` 2) x              -- See Note [Half of y - 1]
       g x y z
         | even y = g (x `mappend` x) (y `quot` 2) z
         | y == 1 = x `mappend` z
-        | otherwise = g (x `mappend` x) (pred y `quot` 2) (x `mappend` z)
+        | otherwise = g (x `mappend` x) (y `quot` 2) (x `mappend` z) -- See Note [Half of y - 1]
 
 -- | This is a valid definition of 'stimes' for an idempotent 'Monoid'.
 --
