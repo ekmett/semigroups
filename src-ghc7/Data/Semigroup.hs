@@ -1233,7 +1233,11 @@ instance Semigroup a => Semigroup (IO a) where
     (<>) = liftA2 (<>)
 
 instance Semigroup a => Semigroup (Strict.ST s a) where
+#if MIN_VERSION_base(4,4,0)
     (<>) = liftA2 (<>)
+#else
+    (<>) = liftM2 (<>) -- No Applicative instance for ST on GHC 7.0
+#endif
 
 #if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS) && !defined(ETA_VERSION)
 # if MIN_VERSION_base(4,4,0)
