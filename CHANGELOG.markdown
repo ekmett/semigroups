@@ -1,3 +1,8 @@
+next
+----
+* Backport `Semigroup` instances for `Data.Ord.Down` and strict `ST`, which were
+  added in `base-4.11`.
+
 0.18.3
 ------
 * Add `Semigroup` instance for `IO`, as well as for `Event` and `Lifetime` from

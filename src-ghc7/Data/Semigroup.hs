@@ -114,8 +114,14 @@ import Data.Monoid (Alt(..))
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Fix
+import qualified Control.Monad.ST as Strict
 import qualified Data.Monoid as Monoid
 import Data.List.NonEmpty
+#if MIN_VERSION_base(4,6,0)
+import Data.Ord (Down(..))
+#else
+import GHC.Exts (Down(..))
+#endif
 #if MIN_VERSION_base(4,4,0) && !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS) && !defined(ETA_VERSION)
 import GHC.Event
 #endif
@@ -357,6 +363,14 @@ instance Num a => Semigroup (Product a) where
   Product a <> Product b = Product (a * b)
 #endif
   stimes n (Product a) = Product (a ^ n)
+
+instance Semigroup a => Semigroup (Down a) where
+#ifdef USE_COERCE
+  (<>) = coerce ((<>) :: a -> a -> a)
+#else
+  Down a <> Down b = Down (a <> b)
+#endif
+  stimes n (Down a) = Down (stimes n a)
 
 -- | This is a valid definition of 'stimes' for a 'Monoid'.
 --
@@ -1216,6 +1230,9 @@ instance Semigroup a => Semigroup (Tagged s a) where
 #endif
 
 instance Semigroup a => Semigroup (IO a) where
+    (<>) = liftA2 (<>)
+
+instance Semigroup a => Semigroup (Strict.ST s a) where
     (<>) = liftA2 (<>)
 
 #if !defined(mingw32_HOST_OS) && !defined(ghcjs_HOST_OS) && !defined(ETA_VERSION)
