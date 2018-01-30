@@ -1,5 +1,5 @@
-next
-----
+0.18.4 [2018.01.29]
+-------------------
 * Backport `Semigroup` instances for `Data.Ord.Down` and strict `ST`, which were
   added in `base-4.11`.
 
