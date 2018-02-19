@@ -172,8 +172,8 @@ import Data.Tagged
 #endif
 
 #ifdef MIN_VERSION_text
-import qualified Data.Text as Strict
-import qualified Data.Text.Lazy as Lazy
+import qualified Data.Text as Strict hiding (concat)
+import qualified Data.Text.Lazy as Lazy hiding (concat)
 import qualified Data.Text.Lazy.Builder as Text
 #endif
 
@@ -941,9 +941,11 @@ instance Semigroup Builder.Builder where
 #ifdef MIN_VERSION_bytestring
 instance Semigroup Strict.ByteString where
   (<>) = mappend
+  sconcat (b:|bs) = Strict.concat (b:bs)
 
 instance Semigroup Lazy.ByteString where
   (<>) = mappend
+  sconcat (b:|bs) = Lazy.concat (b:bs)
 
 # if (MIN_VERSION_bytestring(0,10,0)) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ByteString.Builder where
