@@ -145,8 +145,8 @@ import qualified Data.Binary.Builder as Builder
 #endif
 
 #ifdef MIN_VERSION_bytestring
-import Data.ByteString as Strict
-import Data.ByteString.Lazy as Lazy
+import Data.ByteString as BS
+import Data.ByteString.Lazy as BL
 
 # if (MIN_VERSION_bytestring(0,10,2)) || defined(MIN_VERSION_bytestring_builder)
 import qualified Data.ByteString.Builder as ByteString
@@ -172,8 +172,8 @@ import Data.Tagged
 #endif
 
 #ifdef MIN_VERSION_text
-import qualified Data.Text as Strict hiding (concat)
-import qualified Data.Text.Lazy as Lazy hiding (concat)
+import qualified Data.Text as TS
+import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Builder as Text
 #endif
 
@@ -939,13 +939,13 @@ instance Semigroup Builder.Builder where
 #endif
 
 #ifdef MIN_VERSION_bytestring
-instance Semigroup Strict.ByteString where
+instance Semigroup BS.ByteString where
   (<>) = mappend
-  sconcat (b:|bs) = Strict.concat (b:bs)
+  sconcat (b:|bs) = BS.concat (b:bs)
 
-instance Semigroup Lazy.ByteString where
+instance Semigroup BL.ByteString where
   (<>) = mappend
-  sconcat (b:|bs) = Lazy.concat (b:bs)
+  sconcat (b:|bs) = BL.concat (b:bs)
 
 # if (MIN_VERSION_bytestring(0,10,0)) || defined(MIN_VERSION_bytestring_builder)
 instance Semigroup ByteString.Builder where
@@ -959,10 +959,10 @@ instance Semigroup ShortByteString where
 #endif
 
 #ifdef MIN_VERSION_text
-instance Semigroup Strict.Text where
+instance Semigroup TS.Text where
   (<>) = mappend
 
-instance Semigroup Lazy.Text where
+instance Semigroup TL.Text where
   (<>) = mappend
 
 instance Semigroup Text.Builder where
