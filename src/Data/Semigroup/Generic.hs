@@ -27,7 +27,9 @@ module Data.Semigroup.Generic
   , gmempty
   ) where
 
+#if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
+#endif
 import GHC.Generics
 
 -- | Generically generate a 'Semigroup' ('<>') operation for any type
