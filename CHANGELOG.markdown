@@ -1,5 +1,5 @@
-next [????.??.??]
------------------
+0.18.5 [2018.07.02]
+-------------------
 * Use a more efficient `sconcat` for the `Semigroup` instances for strict and
   lazy `ByteString`.
 
