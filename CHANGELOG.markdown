@@ -1,3 +1,8 @@
+next [????.??.??]
+-----------------
+* Use a more efficient `sconcat` for the `Semigroup` instances for strict and
+  lazy `ByteString`.
+
 0.18.4 [2018.01.29]
 -------------------
 * Backport `Semigroup` instances for `Data.Ord.Down` and strict `ST`, which were
