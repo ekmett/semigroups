@@ -1,3 +1,8 @@
+0.19
+----
+* Fixed the `Hashable` instance for `Arg` to only hash the first argument,
+  lest equal values have different hashes.
+
 0.18.5 [2018.07.02]
 -------------------
 * Use a more efficient `sconcat` for the `Semigroup` instances for strict and
