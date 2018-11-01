@@ -711,11 +711,11 @@ instance (NFData a, NFData b) => NFData (Arg a b) where
 #endif
 
 #ifdef MIN_VERSION_hashable
-instance (Hashable a, Hashable b) => Hashable (Arg a b) where
+instance Hashable a => Hashable (Arg a b) where
 #if MIN_VERSION_hashable(1,2,0)
-  hashWithSalt p (Arg a b) = hashWithSalt p a `hashWithSalt` b
+  hashWithSalt p (Arg a b) = hashWithSalt p a
 #else
-  hash (Arg a b) = hashWithSalt (hash a) b
+  hash (Arg a b) = hash a
 #endif
 #endif
 
