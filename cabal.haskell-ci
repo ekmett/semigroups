@@ -1,0 +1,26 @@
+constraint-set no-binary
+  constraints: semigroups -binary
+
+constraint-set no-bytestring
+  constraints: semigroups -bytestring
+
+constraint-set no-containers
+  constraints: semigroups -containers
+
+constraint-set no-deepseq
+  constraints: semigroups -deepseq
+
+constraint-set no-tagged
+  constraints: semigroups -tagged
+
+constraint-set no-text
+  constraints: semigroups -text
+
+constraint-set no-hashable
+  constraints: semigroups -hashable
+
+constraint-set no-unordered-containers
+  constraints: semigroups -hashable, semigroups -unordered-containers
+
+constraint-set no-transformers
+  constraints: semigroups -transformers
