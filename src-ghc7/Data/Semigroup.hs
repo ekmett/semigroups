@@ -6,8 +6,6 @@
 #endif
 
 #if __GLASGOW_HASKELL__ >= 702
-#define LANGUAGE_DefaultSignatures
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Trustworthy #-}
 #endif
 
@@ -208,10 +206,6 @@ class Semigroup a where
   -- ('<>') = 'mappend'
   -- @
   (<>) :: a -> a -> a
-#ifdef LANGUAGE_DefaultSignatures
-  default (<>) :: Monoid a => a -> a -> a
-  (<>) = mappend
-#endif
 
   -- | Reduce a non-empty list with @\<\>@
   --
