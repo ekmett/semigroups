@@ -24,3 +24,6 @@ constraint-set no-unordered-containers
 
 constraint-set no-transformers
   constraints: semigroups -transformers
+
+constraint-set no-template-haskell
+  constraints: semigroups -template-haskell

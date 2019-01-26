@@ -1,12 +1,7 @@
 {-# LANGUAGE CPP #-}
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-#if defined(MIN_VERSION_hashable) || __GLASGOW_HASKELL__ == 702 \
-                                  || __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE Trustworthy #-}
-#else
-{-# LANGUAGE Safe #-}
-#endif
 #endif
 
 #ifdef __GLASGOW_HASKELL__
@@ -169,6 +164,14 @@ import qualified GHC.Exts as Exts
 
 #ifdef LANGUAGE_DeriveGeneric
 import GHC.Generics
+#endif
+
+#ifdef MIN_VERSION_template_haskell
+import qualified Language.Haskell.TH.Syntax as TH
+#ifndef CURRENT_PACKAGE_KEY
+import Data.Version (showVersion)
+import Paths_semigroups (version)
+#endif
 #endif
 
 infixr 5 :|, <|
@@ -344,6 +347,24 @@ instance Foldable NonEmpty where
 #if MIN_VERSION_base(4,8,0)
   length = length
   toList = toList
+#endif
+
+#ifdef MIN_VERSION_template_haskell
+-- | @since 0.19
+instance TH.Lift a => TH.Lift (NonEmpty a) where
+    lift (x :| xs) = do
+        x' <- TH.lift x
+        xs' <- TH.lift xs
+        return $ TH.InfixE (Just x') (TH.ConE neConsName) (Just xs')
+      where
+        neConsName = TH.mkNameG_d semigroupsPackageKey "Data.List.NonEmpty" ":|"
+
+semigroupsPackageKey         :: String
+#ifdef CURRENT_PACKAGE_KEY
+semigroupsPackageKey          = CURRENT_PACKAGE_KEY
+#else
+semigroupsPackageKey          = "semigroups-" ++ showVersion version
+#endif
 #endif
 
 -- | Extract the first element of the stream.
