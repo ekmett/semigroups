@@ -4,6 +4,7 @@
   lest equal values have different hashes.
 * Add `Lift (NonEmpty a)` instance.
 * `Data.List.NonEmpty` is unconditionally *Trustworthy*
+* `<>` member doesn't have default implementation anymore
 
 0.18.5 [2018.07.02]
 -------------------

@@ -6,8 +6,6 @@
 #endif
 
 #if __GLASGOW_HASKELL__ >= 702
-#define LANGUAGE_DefaultSignatures
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Trustworthy #-}
 #endif
 
@@ -208,10 +206,6 @@ class Semigroup a where
   -- ('<>') = 'mappend'
   -- @
   (<>) :: a -> a -> a
-#ifdef LANGUAGE_DefaultSignatures
-  default (<>) :: Monoid a => a -> a -> a
-  (<>) = mappend
-#endif
 
   -- | Reduce a non-empty list with @\<\>@
   --
@@ -708,9 +702,9 @@ instance (NFData a, NFData b) => NFData (Arg a b) where
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Arg a b) where
 #if MIN_VERSION_hashable(1,2,0)
-  hashWithSalt p (Arg a b) = hashWithSalt p a
+  hashWithSalt p (Arg a _b) = hashWithSalt p a
 #else
-  hash (Arg a b) = hash a
+  hash (Arg a _) = hash a
 #endif
 #endif
 
