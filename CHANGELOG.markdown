@@ -1,10 +1,15 @@
-0.19
-----
-* Fixed the `Hashable` instance for `Arg` to only hash the first argument,
+0.19 [????.??.??]
+-----------------
+* The `(<>)` method of the backported `Semigroup` class no longer has a default
+  implementation in terms of `mappend`. This mirrors the `Data.Semigroup` API
+  that was introduced in `base-4.9`. This is a breaking change for any
+  `Semigroup` instances that are defined in tandem with versions of `base`
+  older than 4.9.
+* Fix the `Hashable` instance for `Arg` to only hash the first argument,
   lest equal values have different hashes.
-* Add `Lift (NonEmpty a)` instance.
-* `Data.List.NonEmpty` is unconditionally *Trustworthy*
-* `<>` member doesn't have default implementation anymore
+* Backport the `Lift (NonEmpty a)` instance introduced in
+  `template-haskell-2.15.0.0`.
+* `Data.List.NonEmpty` is now unconditionally `Trustworthy`.
 
 0.18.5 [2018.07.02]
 -------------------
