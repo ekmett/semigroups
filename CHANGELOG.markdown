@@ -6,7 +6,8 @@
   `Semigroup` instances that are defined in tandem with versions of `base`
   older than 4.9.
 * Fix the `Hashable` instance for `Arg` to only hash the first argument,
-  lest equal values have different hashes.
+  lest equal values have different hashes. For consistency, require
+  `hashable >=1.3` with old GHC / base.
 * Backport the `Lift (NonEmpty a)` instance introduced in
   `template-haskell-2.15.0.0`.
 * `Data.List.NonEmpty` is now unconditionally `Trustworthy`.
