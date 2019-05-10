@@ -470,11 +470,7 @@ instance Enum a => Enum (Min a) where
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Min a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (Min a) = hashWithSalt p a
-#else
-  hash (Min a) = hash a
-#endif
 #endif
 
 instance Ord a => Semigroup (Min a) where
@@ -577,11 +573,7 @@ instance Enum a => Enum (Max a) where
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Max a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (Max a) = hashWithSalt p a
-#else
-  hash (Max a) = hash a
-#endif
 #endif
 
 instance Ord a => Semigroup (Max a) where
@@ -701,11 +693,7 @@ instance (NFData a, NFData b) => NFData (Arg a b) where
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Arg a b) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (Arg a _b) = hashWithSalt p a
-#else
-  hash (Arg a _) = hash a
-#endif
 #endif
 
 #if MIN_VERSION_base(4,8,0)
@@ -765,11 +753,7 @@ instance Enum a => Enum (First a) where
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (First a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (First a) = hashWithSalt p a
-#else
-  hash (First a) = hash a
-#endif
 #endif
 
 instance Semigroup (First a) where
@@ -856,11 +840,7 @@ instance Enum a => Enum (Last a) where
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Last a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (Last a) = hashWithSalt p a
-#else
-  hash (Last a) = hash a
-#endif
 #endif
 
 instance Semigroup (Last a) where
@@ -985,11 +965,7 @@ newtype WrappedMonoid m = WrapMonoid
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (WrappedMonoid a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (WrapMonoid a) = hashWithSalt p a
-#else
-  hash (WrapMonoid a) = hash a
-#endif
 #endif
 
 instance Monoid m => Semigroup (WrappedMonoid m) where
@@ -1078,11 +1054,7 @@ newtype Option a = Option
 
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (Option a) where
-#if MIN_VERSION_hashable(1,2,0)
   hashWithSalt p (Option a) = hashWithSalt p a
-#else
-  hash (Option a) = hash a
-#endif
 #endif
 
 instance Functor Option where
