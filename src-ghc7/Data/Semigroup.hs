@@ -692,8 +692,15 @@ instance (NFData a, NFData b) => NFData (Arg a b) where
 #endif
 
 #ifdef MIN_VERSION_hashable
+#if MIN_VERSION_hashable(1,3,0)
+-- | Instance like defined in @hashable-1.3@
 instance Hashable a => Hashable (Arg a b) where
   hashWithSalt p (Arg a _b) = hashWithSalt p a
+#else
+-- | Instance like defined in @hashable-1.2@
+instance (Hashable a, Hashable b) => Hashable (Arg a b) where
+  hashWithSalt p (Arg a b) = hashWithSalt p a `hashWithSalt` b
+#endif
 #endif
 
 #if MIN_VERSION_base(4,8,0)
