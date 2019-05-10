@@ -15,9 +15,7 @@ description:
     In mathematics, a semigroup is an algebraic structure consisting of a set together with an associative binary operation. A semigroup generalizes a monoid in that there might not exist an identity element. It also (originally) generalized a group (a monoid with all inverses) to a type where every element did not have to have an inverse, thus the name semigroup.
 build-type:    Simple
 extra-source-files: .travis.yml README.markdown CHANGELOG.markdown
-tested-with:   GHC == 7.0.4
-             , GHC == 7.2.2
-             , GHC == 7.4.2
+tested-with:   GHC == 7.4.2
              , GHC == 7.6.3
              , GHC == 7.8.4
              , GHC == 7.10.3
@@ -130,9 +128,7 @@ library
 
   build-depends: base >= 2 && < 5
 
-  if impl(ghc >= 7.2)
-    exposed-modules:
-      Data.Semigroup.Generic
+  exposed-modules: Data.Semigroup.Generic
 
   -- legacy configuration
   if impl(ghc < 7.11.20151002)
