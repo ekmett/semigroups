@@ -204,23 +204,23 @@ instance Exts.IsList (NonEmpty a) where
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 706
 instance Generic1 NonEmpty where
   type Rep1 NonEmpty
-    = D1 D1NonEmpty
-        (C1 C1_0NonEmpty
+    = D1 D1'NonEmpty
+        (C1 C1'_0NonEmpty
              (S1 NoSelector Par1
           :*: S1 NoSelector (Rec1 [])))
   from1 (h :| t) = M1 (M1 (M1 (Par1 h) :*: M1 (Rec1 t)))
   to1 (M1 (M1 (M1 h :*: M1 t))) = unPar1 h :| unRec1 t
 
-instance Datatype D1NonEmpty where
+instance Datatype D1'NonEmpty where
   datatypeName _ = "NonEmpty"
   moduleName   _ = "Data.List.NonEmpty"
 
-instance Constructor C1_0NonEmpty where
+instance Constructor C1'_0NonEmpty where
   conName   _ = ":|"
   conFixity _ = Infix RightAssociative 5
 
-data D1NonEmpty
-data C1_0NonEmpty
+data D1'NonEmpty
+data C1'_0NonEmpty
 #endif
 
 #ifdef MIN_VERSION_deepseq
