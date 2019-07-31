@@ -1,5 +1,7 @@
 next [????.??.??]
 -----------------
+* Add `GenericSemigroupMonoid`, an adapter newtype suitable for `DerivingVia`,
+  to `Data.Semigroup.Generic`.
 * Work around a bug related to the backported `Generic(1)` instances in this
   package (that could only be triggered on GHC 7.2 or 7.4) in which the
   hand-written `Datatype`, `Constructor`, and `Selector` instances for internal

@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE UndecidableInstances #-}
 #if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
 #else
@@ -21,14 +22,21 @@
 --
 ----------------------------------------------------------------------------
 module Data.Semigroup.Generic
-  ( GSemigroup
-  , gmappend
-  , GMonoid
-  , gmempty
+  ( -- * Generic method implementations
+    gmappend, gmempty
+
+    -- * Adapter newtype
+  , GenericSemigroupMonoid(..)
+
+    -- * Internal classes
+  , GSemigroup, GMonoid
   ) where
 
+#if !(MIN_VERSION_base(4,8,0))
+import Data.Monoid (Monoid(..))
+#endif
 #if !(MIN_VERSION_base(4,11,0))
-import Data.Semigroup
+import Data.Semigroup (Semigroup(..))
 #endif
 import GHC.Generics
 
@@ -87,3 +95,26 @@ instance GMonoid f => GMonoid (M1 i c f) where
 
 instance (GMonoid f, GMonoid g) => GMonoid (f :*: g) where
   gmempty' = gmempty' :*: gmempty'
+
+-- | An adapter newtype, suitable for @DerivingVia@. Its 'Semigroup' and
+-- 'Monoid' instances leverage the 'Generic'-based defaults defined by
+-- 'gmappend' and 'gmempty'. Here is an example of how to use it:
+--
+-- @
+-- &#123;-&#35; LANGUAGE DerivingVia &#35;-&#125;
+-- import "Data.Semigroup.Generic"
+--
+-- data Pair a = MkPair a a
+--   deriving ('Semigroup', 'Monoid') via ('GenericSemigroupMonoid' (Pair a))
+-- @
+newtype GenericSemigroupMonoid a =
+  GenericSemigroupMonoid { getGenericSemigroupMonoid :: a }
+
+instance (Generic a, GSemigroup (Rep a)) => Semigroup (GenericSemigroupMonoid a) where
+  GenericSemigroupMonoid x <> GenericSemigroupMonoid y =
+    GenericSemigroupMonoid (gmappend x y)
+instance (Generic a, GMonoid (Rep a)) => Monoid (GenericSemigroupMonoid a) where
+  mempty = GenericSemigroupMonoid gmempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = (<>)
+#endif
