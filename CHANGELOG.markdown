@@ -1,5 +1,5 @@
-next [????.??.??]
------------------
+0.19.1 [2019.08.27]
+-------------------
 * Add `GenericSemigroupMonoid`, an adapter newtype suitable for `DerivingVia`,
   to `Data.Semigroup.Generic`.
 * Work around a bug related to the backported `Generic(1)` instances in this
