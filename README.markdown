@@ -1,7 +1,7 @@
 semigroups
 ==========
 
-[![Hackage](https://img.shields.io/hackage/v/semigroups.svg)](https://hackage.haskell.org/package/semigroups) [![Build Status](https://secure.travis-ci.org/ekmett/semigroups.png?branch=master)](http://travis-ci.org/ekmett/semigroups)
+[![Hackage](https://img.shields.io/hackage/v/semigroups.svg)](https://hackage.haskell.org/package/semigroups) [![Build Status](https://github.com/ekmett/semigroups/workflows/Haskell-CI/badge.svg)](https://github.com/ekmett/semigroups/actions?query=workflow%3AHaskell-CI)
 
 Haskellers are usually familiar with monoids. A monoid has an appending operation `<>` or `mappend` and an identity element `mempty`. A Semigroup has an append `<>`, but does not require an `mempty` element. A Monoid can be made a Semigroup with just `instance Semigroup MyMonoid`
 
