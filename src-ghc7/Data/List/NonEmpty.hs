@@ -146,6 +146,7 @@ import Data.Function (on)
 
 #ifdef MIN_VERSION_hashable
 import Data.Hashable
+import Data.Hashable.Lifted
 #endif
 
 #ifdef MIN_VERSION_transformers
@@ -192,6 +193,10 @@ data NonEmpty a = a :| [a] deriving
 #ifdef MIN_VERSION_hashable
 instance Hashable a => Hashable (NonEmpty a) where
   hashWithSalt p (a :| as) = p `hashWithSalt` a `hashWithSalt` as
+
+-- | @since UNRELEASED
+instance Hashable1 NonEmpty where
+    liftHashWithSalt h salt (a :| as) = liftHashWithSalt h (h salt a) as
 #endif
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
