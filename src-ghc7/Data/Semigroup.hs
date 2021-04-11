@@ -109,7 +109,7 @@ import Control.Monad
 import Control.Monad.Fix
 import qualified Control.Monad.ST as Strict
 import qualified Data.Monoid as Monoid
-import Data.List.NonEmpty
+import Data.List.NonEmpty (NonEmpty(..))
 #if MIN_VERSION_base(4,6,0)
 import Data.Ord (Down(..))
 #else
