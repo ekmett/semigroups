@@ -177,7 +177,7 @@ import Data.Hashable.Lifted
 
 #ifdef MIN_VERSION_unordered_containers
 import Data.HashMap.Lazy as Lazy
-import Data.HashSet
+import Data.HashSet (HashSet)
 #endif
 
 #ifdef LANGUAGE_DeriveDataTypeable
