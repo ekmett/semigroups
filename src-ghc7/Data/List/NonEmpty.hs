@@ -194,7 +194,7 @@ data NonEmpty a = a :| [a] deriving
 instance Hashable a => Hashable (NonEmpty a) where
   hashWithSalt p (a :| as) = p `hashWithSalt` a `hashWithSalt` as
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 NonEmpty where
     liftHashWithSalt h salt (a :| as) = liftHashWithSalt h (h salt a) as
 #endif

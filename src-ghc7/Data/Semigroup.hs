@@ -473,7 +473,7 @@ instance Enum a => Enum (Min a) where
 instance Hashable a => Hashable (Min a) where
   hashWithSalt p (Min a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 Min where
   liftHashWithSalt h salt (Min a) = h salt a
 #endif
@@ -580,7 +580,7 @@ instance Enum a => Enum (Max a) where
 instance Hashable a => Hashable (Max a) where
   hashWithSalt p (Max a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 Max where
   liftHashWithSalt h salt (Max a) = h salt a
 #endif
@@ -771,7 +771,7 @@ instance Enum a => Enum (First a) where
 instance Hashable a => Hashable (First a) where
   hashWithSalt p (First a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 First where
   liftHashWithSalt h salt (First a) = h salt a
 #endif
@@ -862,7 +862,7 @@ instance Enum a => Enum (Last a) where
 instance Hashable a => Hashable (Last a) where
   hashWithSalt p (Last a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 Last where
   liftHashWithSalt h salt (Last a) = h salt a
 #endif
@@ -991,7 +991,7 @@ newtype WrappedMonoid m = WrapMonoid
 instance Hashable a => Hashable (WrappedMonoid a) where
   hashWithSalt p (WrapMonoid a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 WrappedMonoid where
   liftHashWithSalt h salt (WrapMonoid a) = h salt a
 #endif
@@ -1084,7 +1084,7 @@ newtype Option a = Option
 instance Hashable a => Hashable (Option a) where
   hashWithSalt p (Option a) = hashWithSalt p a
 
--- | @since UNRELEASED
+-- | @since 0.19.2
 instance Hashable1 Option where
   liftHashWithSalt h salt (Option a) = liftHashWithSalt h salt a
 #endif

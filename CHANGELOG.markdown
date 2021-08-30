@@ -1,3 +1,8 @@
+0.19.2 [????.??.??]
+-------------------
+* Backport `Hashable1` instances for `NonEmpty`, `Min`, `Max`, `First`, `Last`,
+  `WrappedMonoid`, and `Option`.
+
 0.19.1 [2019.08.27]
 -------------------
 * Add `GenericSemigroupMonoid`, an adapter newtype suitable for `DerivingVia`,
