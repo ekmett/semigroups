@@ -1,4 +1,4 @@
-0.19.2 [????.??.??]
+0.19.2 [2021.08.30]
 -------------------
 * Backport `Hashable1` instances for `NonEmpty`, `Min`, `Max`, `First`, `Last`,
   `WrappedMonoid`, and `Option`.
