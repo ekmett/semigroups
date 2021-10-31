@@ -1,6 +1,6 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
-version:       0.19.2
+version:       0.20
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -175,7 +175,7 @@ library
       build-depends: text >= 0.10 && < 2
 
     if flag(hashable)
-      build-depends: hashable >= 1.2.5.0  && < 1.4
+      build-depends: hashable >= 1.2.5.0  && < 1.5
 
     if flag(hashable) && flag(unordered-containers)
       build-depends: unordered-containers >= 0.2  && < 0.3
