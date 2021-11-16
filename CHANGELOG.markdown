@@ -1,7 +1,8 @@
-0.20 [2021.mm.dd]
+0.20 [2021.11.15]
 -----------------
 * Support `hashable-1.4`. The `Hashable1` instances added in 0.19.2
-  are removed for all types except `NonEmpty`.
+  are removed for all types except `NonEmpty`, in accordance with the
+  corresponding changes from `hashable-1.4`.
 
 0.19.2 [2021.08.30]
 -------------------
