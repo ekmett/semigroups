@@ -107,6 +107,8 @@ instance (GMonoid f, GMonoid g) => GMonoid (f :*: g) where
 -- data Pair a = MkPair a a
 --   deriving ('Semigroup', 'Monoid') via ('GenericSemigroupMonoid' (Pair a))
 -- @
+--
+-- @since 0.19.1
 newtype GenericSemigroupMonoid a =
   GenericSemigroupMonoid { getGenericSemigroupMonoid :: a }
 
