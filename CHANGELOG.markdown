@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Drop support for pre-8.0 versions of GHC.
+
 0.20 [2021.11.15]
 -----------------
 * Support `hashable-1.4`. The `Hashable1` instances added in 0.19.2
