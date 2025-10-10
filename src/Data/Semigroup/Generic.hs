@@ -1,12 +1,8 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE UndecidableInstances #-}
-#if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
-#else
-{-# LANGUAGE Trustworthy #-}
-#endif
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup.Generic
@@ -32,9 +28,6 @@ module Data.Semigroup.Generic
   , GSemigroup, GMonoid
   ) where
 
-#if !(MIN_VERSION_base(4,8,0))
-import Data.Monoid (Monoid(..))
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup(..))
 #endif
