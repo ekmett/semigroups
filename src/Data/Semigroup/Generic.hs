@@ -6,7 +6,8 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Semigroup.Generic
--- Copyright   :  (C) 2014-2015 Edward Kmett, Eric Mertens
+-- Copyright   :  (C) 2014-2026 Edward Kmett,
+--                   2014-2015 Eric Mertens
 -- License     :  BSD-style (see the file LICENSE)
 --
 -- Maintainer  :  Edward Kmett <ekmett@gmail.com>
