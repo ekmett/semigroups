@@ -45,6 +45,9 @@ import GHC.Generics
 gmappend :: (Generic a, GSemigroup (Rep a)) => a -> a -> a
 gmappend x y = to (gmappend' (from x) (from y))
 
+-- | The representation-level 'Semigroup' constraint used by 'gmappend'.
+-- Fields are combined pointwise using their 'Semigroup' instances. There
+-- is no instance for sum representations (@:+:@).
 class GSemigroup f where
   gmappend' :: f p -> f p -> f p
 
@@ -75,6 +78,8 @@ instance (GSemigroup f, GSemigroup g) => GSemigroup (f :*: g) where
 gmempty :: (Generic a, GMonoid (Rep a)) => a
 gmempty = to gmempty'
 
+-- | The representation-level 'Monoid' constraint used by 'gmempty'.
+-- The identity is built pointwise from the fields' 'Monoid' identities.
 class GSemigroup f => GMonoid f where
   gmempty' :: f p
 
