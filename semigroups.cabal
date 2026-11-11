@@ -1,7 +1,7 @@
 name:          semigroups
 category:      Algebra, Data, Data Structures, Math
 version:       0.20.1
-license:       BSD3
+license:       BSD2
 cabal-version: >= 1.10
 license-file:  LICENSE
 author:        Edward A. Kmett
