@@ -92,15 +92,18 @@ instance (GMonoid f, GMonoid g) => GMonoid (f :*: g) where
 
 -- | An adapter newtype, suitable for @DerivingVia@. Its 'Semigroup' and
 -- 'Monoid' instances leverage the 'Generic'-based defaults defined by
--- 'gmappend' and 'gmempty'. Here is an example of how to use it:
+-- 'gmappend' and 'gmempty'.
 --
--- @
--- &#123;-&#35; LANGUAGE DerivingVia &#35;-&#125;
--- import "Data.Semigroup.Generic"
+-- Derive 'Generic' for the product type before deriving its 'Semigroup'
+-- and 'Monoid' instances via 'GenericSemigroupMonoid' (GHC 8.6 or later):
 --
--- data Pair a = MkPair a a
---   deriving ('Semigroup', 'Monoid') via ('GenericSemigroupMonoid' (Pair a))
--- @
+-- >>> :set -XDeriveGeneric -XDerivingVia
+-- >>> import GHC.Generics (Generic)
+-- >>> data Pair a = MkPair a a deriving stock (Generic, Show) deriving (Semigroup, Monoid) via (GenericSemigroupMonoid (Pair a))
+-- >>> MkPair "a" "b" <> MkPair "c" "d"
+-- MkPair "ac" "bd"
+-- >>> mempty :: Pair [Int]
+-- MkPair [] []
 --
 -- @since 0.19.1
 newtype GenericSemigroupMonoid a =
